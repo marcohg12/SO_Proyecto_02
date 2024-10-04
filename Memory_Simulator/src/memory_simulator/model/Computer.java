@@ -18,7 +18,7 @@ public class Computer {
     public ComputerState getState(){
         return new ComputerState(mmu.getPhysicalMem(), mmu.getVirtualMem(), 
                                  mmu.getClock(), mmu.getThrashing(), 
-                                 processes.size(), mmu.getPhysicalMemSize());
+                                 processes, mmu.getPhysicalMemSize());
     }
     
     public void executeNew(int pId, int size){
@@ -37,7 +37,7 @@ public class Computer {
         }
         
         // Solicitamos la memoria para el proceso a la MMU
-        int pointer = mmu.createPagesForProcess(size);
+        int pointer = mmu.createPagesForProcess(pId, size);
         
         // Guardamos el puntero en la lista de punteros del proceso
         process.insertPointer(pointer);
@@ -76,7 +76,5 @@ public class Computer {
         
         // Eliminamos el proceso de la lista de procesos
         processes.remove(process);
-    }
-    
-    
+    }  
 }

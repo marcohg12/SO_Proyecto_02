@@ -38,7 +38,7 @@ public class MMU {
         }
     }
     
-    private Page insertPage(int spaceUsed){
+    private Page insertPage(int processId, int spaceUsed){
         
         // Verifica si puede insertar la página en memoria física
         for (int i = 0; i < maxPagesInPhysicalMem; i++){
@@ -46,7 +46,7 @@ public class MMU {
             // Si encontramos un espacio libre, insertarmos la página
             if (physicalMem[i] == null){
                 
-                Page page = new Page(pageCount, i, true, spaceUsed);
+                Page page = new Page(pageCount, i, true, spaceUsed, processId);
                 page.setTimestamp(Instant.now());
                 page.setLastUsage(Instant.now());
                 physicalMem[i] = page;
@@ -59,7 +59,7 @@ public class MMU {
         
         // Si no se pudo insertar en memoria física, entonces se inserta
         // en memoria virtual
-        Page page = new Page(pageCount, -1, false, spaceUsed);
+        Page page = new Page(pageCount, -1, false, spaceUsed, processId);
         pageCount += 1;
         clock += 5;
         virtualMem.add(page);
@@ -73,7 +73,7 @@ public class MMU {
      * @return Un puntero al mapa de memoria. El puntero es la llave del mapa para
      * la lista de páginas creadas para el proceso
      */
-    public int createPagesForProcess(int size){
+    public int createPagesForProcess(int processId, int size){
         
         // Calculamos la cantidad de páginas necesarias para el proceso
         int pagesRequired = size / pageSize;
@@ -85,10 +85,10 @@ public class MMU {
         
         // Insertamos las páginas
         for (int i = 0; i < pagesRequired - 1; i++){
-            Page page = insertPage(4);
+            Page page = insertPage(processId, 4);
             createdPages.add(page); 
         }
-        Page page = insertPage(size % 4);
+        Page page = insertPage(processId, size % 4);
         createdPages.add(page); 
         
         // Creamos el puntero e insertamos las páginas creadas asociadas 

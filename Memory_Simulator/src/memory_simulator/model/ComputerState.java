@@ -10,7 +10,8 @@ public class ComputerState {
     private ArrayList<Page> allPages;
     private int clock;
     private int thrashing;
-    private int processes;
+    private ArrayList<Process> processes;
+    private int numberOfProcesses;
     private int loadedPages;
     private int unloadedPages;
     private int internalFragmentation;
@@ -22,13 +23,14 @@ public class ComputerState {
     private int physicalMemSize;
     
     public ComputerState(Page[] physicalMem, ArrayList<Page> virtualMem, 
-                         int clock, int thrashing, int processes, int physicalMemSize){
+                         int clock, int thrashing, ArrayList<Process> processes, int physicalMemSize){
         
         this.physicalMem = new Page[physicalMem.length];
         this.loadedPages = 0;
         this.unloadedPages = 0;
         this.clock = clock;
-        this.processes = processes;
+        this.processes = new ArrayList();
+        this.numberOfProcesses = processes.size();
         this.thrashing = thrashing; 
         this.allPages = new ArrayList();
         this.internalFragmentation = 0;
@@ -38,6 +40,12 @@ public class ComputerState {
         this.usedVMemoryPerc = 0.0;
         this.thrashingPerc = 0.0;
         this.physicalMemSize = physicalMemSize;
+        
+        // Realiza una copia de la lista de procesos
+        for (int i = 0; i < processes.size(); i++){
+            Process process = processes.get(i);
+            this.processes.add(process.clone());
+        }
         
         // Realiza una copia de la memoria física
         for (int i = 0; i < physicalMem.length; i++){
@@ -118,7 +126,7 @@ public class ComputerState {
         return thrashing;
     }
 
-    public int getProcesses() {
+    public ArrayList<Process> getProcesses() {
         return processes;
     }
 
@@ -157,4 +165,8 @@ public class ComputerState {
     public int getPhysicalMemSize() {
         return physicalMemSize;
     }  
+
+    public int getNumberOfProcesses() {
+        return numberOfProcesses;
+    }
 }

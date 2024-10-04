@@ -51,4 +51,11 @@ public class Process {
         final Process other = (Process) obj;
         return this.pId == other.pId;
     }
+    
+    public Process clone(){
+        Process process = new Process(this.pId);
+        ArrayList<Integer> newPointers = (ArrayList<Integer>) this.pointers.clone();
+        process.setPointers(newPointers);
+        return process;
+    }
 }

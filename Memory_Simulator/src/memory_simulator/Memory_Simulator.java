@@ -1,24 +1,34 @@
 package memory_simulator;
 
+import java.util.ArrayList;
+import memory_simulator.logic.Simulation;
 import memory_simulator.model.Computer;
+import memory_simulator.model.ComputerState;
+import memory_simulator.model.PaginationAlgoType;
 
 public class Memory_Simulator {
 
     public static void main(String[] args) {
         
-        /*
-        Computer computer = new Computer();
-        computer.executeNew(1, 250);
-        computer.executeNew(1, 50);
-        computer.executeNew(2, 5320);
-        computer.executeUse(1);
-        computer.executeUse(3);
-        computer.executeUse(2);
-        computer.executeUse(1);
-        computer.executeDelete(1);
-        computer.executeKill(1);
-        computer.executeKill(2);
-        computer.executeKill(3); */
+        ArrayList<String> instructions = new ArrayList();
+        instructions.add("new(1,250)");
+        instructions.add("new(1,50)");
+        instructions.add("new(2,5320)");
+        instructions.add("use(1)");
+        instructions.add("use(3)");
+        instructions.add("use(2)");
+        instructions.add("use(1)");
+        instructions.add("delete(1)");
+        instructions.add("kill(1)");
+        instructions.add("kill(2)");
+        instructions.add("kill(3)");
+        Simulation simulation = new Simulation(PaginationAlgoType.FIFO_ALGO, instructions);
+        int i = 0;
+        while (simulation.executeNext()){
+            ComputerState state = simulation.getState();
+            System.out.println(i + 1);
+            i += 1;
+        }
     }
     
 }

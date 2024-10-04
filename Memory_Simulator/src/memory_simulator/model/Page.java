@@ -11,8 +11,9 @@ public class Page {
     private Instant lastUsage;
     private boolean secondChance;
     private int spaceUsed;
+    private int processId;
     
-    public Page(int pageId, int physicalAddress, boolean inPhysicalMemory, int spaceUsed){
+    public Page(int pageId, int physicalAddress, boolean inPhysicalMemory, int spaceUsed, int processId){
         this.pageId = pageId;
         this.physicalAddress = physicalAddress;
         this.inPhysicalMemory = inPhysicalMemory;
@@ -20,6 +21,7 @@ public class Page {
         lastUsage = null;
         secondChance = true;
         this.spaceUsed = spaceUsed;
+        this.processId = processId;
     }
 
     public int getPageId() {
@@ -77,9 +79,15 @@ public class Page {
     public void setSpaceUsed(int spaceUsed) {
         this.spaceUsed = spaceUsed;
     }
-    
-    
-    
+
+    public int getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(int processId) {
+        this.processId = processId;
+    }
+     
     @Override
     public int hashCode() {
         int hash = 7;
@@ -103,7 +111,7 @@ public class Page {
     
     @Override
     public Page clone(){
-        Page page = new Page(this.pageId, this.physicalAddress, this.inPhysicalMemory, this.spaceUsed);
+        Page page = new Page(this.pageId, this.physicalAddress, this.inPhysicalMemory, this.spaceUsed, this.processId);
         page.setTimestamp(this.getTimestamp());
         page.setLastUsage(this.getLastUsage());
         page.setSecondChance(this.getSecondChance());
