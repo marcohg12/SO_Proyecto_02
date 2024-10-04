@@ -1,17 +1,25 @@
 package memory_simulator.model;
 
 import java.util.ArrayList;
+import memory_simulator.logic.PaginationAlgorithm;
 
 public class Computer {
     
     private MMU mmu;
     private ArrayList<Process> processes;
+    private PaginationAlgorithm paginationAlgorithm;
     
-    Computer(){
-        mmu = new MMU();
+    public Computer(PaginationAlgorithm paginationAlgorithm){
+        this.paginationAlgorithm = paginationAlgorithm;
+        mmu = new MMU(this.paginationAlgorithm);
         processes = new ArrayList();
     }
     
+    public ComputerState getState(){
+        return new ComputerState(mmu.getPhysicalMem(), mmu.getVirtualMem(), 
+                                 mmu.getClock(), mmu.getThrashing(), 
+                                 processes.size(), mmu.getPhysicalMemSize());
+    }
     
     public void executeNew(int pId, int size){
         
@@ -37,6 +45,10 @@ public class Computer {
     
     public void executeDelete(int pointer){
         mmu.releasePointer(pointer);
+    }
+    
+    public void executeUse(int pointer){
+        mmu.usePointer(pointer);
     }
     
     public void executeKill(int pId){

@@ -6,7 +6,7 @@ public class Process {
     private int pId;
     private ArrayList<Integer> pointers;
     
-    Process(int pId){
+    public Process(int pId){
         this.pId = pId;
         pointers = new ArrayList();
     }
