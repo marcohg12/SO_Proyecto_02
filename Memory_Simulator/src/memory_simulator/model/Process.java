@@ -3,6 +3,7 @@ package memory_simulator.model;
 import java.util.ArrayList;
 
 public class Process {
+    
     private int pId;
     private ArrayList<Integer> pointers;
     

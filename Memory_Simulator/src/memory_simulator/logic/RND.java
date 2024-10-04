@@ -8,7 +8,6 @@ public class RND implements PaginationAlgorithm {
     
     public RND(){}
    
-
     @Override
     public void usePage(MMU mmu, Page page) {
         
@@ -40,6 +39,5 @@ public class RND implements PaginationAlgorithm {
             Page out = physicalMem[randAddress];
             mmu.swapPages(page, out);
         }           
-    }
-    
+    }   
 }

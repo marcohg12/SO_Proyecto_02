@@ -63,6 +63,5 @@ public class MRU implements PaginationAlgorithm {
             page.setLastUsage(Instant.now());
             mmu.insertPageInAddress(page, emptyAddress);
         }
-    }
-    
+    }   
 }

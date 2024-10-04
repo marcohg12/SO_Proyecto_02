@@ -7,7 +7,6 @@ public class SC implements PaginationAlgorithm {
     
     public SC(){}
    
-
     @Override
     public void usePage(MMU mmu, Page page) {
         
@@ -61,6 +60,5 @@ public class SC implements PaginationAlgorithm {
             page.setSecondChance(true);
             mmu.insertPageInAddress(page, emptyAddress);
         }
-    }
-    
+    }   
 }

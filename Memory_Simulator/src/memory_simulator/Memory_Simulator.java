@@ -2,7 +2,6 @@ package memory_simulator;
 
 import java.util.ArrayList;
 import memory_simulator.logic.Simulation;
-import memory_simulator.model.Computer;
 import memory_simulator.model.ComputerState;
 import memory_simulator.model.PaginationAlgoType;
 

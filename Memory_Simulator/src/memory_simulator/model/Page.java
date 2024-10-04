@@ -116,9 +116,5 @@ public class Page {
         page.setLastUsage(this.getLastUsage());
         page.setSecondChance(this.getSecondChance());
         return page;
-    }
-    
-    
-    
-    
+    }   
 }

@@ -62,6 +62,5 @@ public class FIFO implements PaginationAlgorithm {
             page.setTimestamp(Instant.now());
             mmu.insertPageInAddress(page, emptyAddress);
         }
-    }
-    
+    } 
 }
