@@ -22,11 +22,9 @@ public class Memory_Simulator {
         instructions.add("kill(2)");
         instructions.add("kill(3)");
         Simulation simulation = new Simulation(PaginationAlgoType.FIFO_ALGO, instructions);
-        int i = 0;
+
         while (simulation.executeNext()){
             ComputerState state = simulation.getState();
-            System.out.println(i + 1);
-            i += 1;
         }
     }
     
