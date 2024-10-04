@@ -1,20 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package memory_simulator;
 
-/**
- *
- * @author marco
- */
+import memory_simulator.model.Computer;
+
 public class Memory_Simulator {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        
+        /*
+        Computer computer = new Computer();
+        computer.executeNew(1, 250);
+        computer.executeNew(1, 50);
+        computer.executeNew(2, 5320);
+        computer.executeUse(1);
+        computer.executeUse(3);
+        computer.executeUse(2);
+        computer.executeUse(1);
+        computer.executeDelete(1);
+        computer.executeKill(1);
+        computer.executeKill(2);
+        computer.executeKill(3); */
     }
     
 }

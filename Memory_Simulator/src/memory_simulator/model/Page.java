@@ -1,21 +1,25 @@
 package memory_simulator.model;
 
+import java.time.Instant;
+
 public class Page {
     
     private int pageId;
     private int physicalAddress;
     private boolean inPhysicalMemory;
-    private int timestamp;
-    private int lastAccess;
-    private int secondChance;
+    private Instant timestamp;
+    private Instant lastUsage;
+    private boolean secondChance;
+    private int spaceUsed;
     
-    Page(int pageId, int physicalAddress, boolean inPhysicalMemory){
+    public Page(int pageId, int physicalAddress, boolean inPhysicalMemory, int spaceUsed){
         this.pageId = pageId;
         this.physicalAddress = physicalAddress;
         this.inPhysicalMemory = inPhysicalMemory;
-        timestamp = 0;
-        lastAccess = 0;
-        secondChance = 1;
+        timestamp = null;
+        lastUsage = null;
+        secondChance = true;
+        this.spaceUsed = spaceUsed;
     }
 
     public int getPageId() {
@@ -42,30 +46,40 @@ public class Page {
         this.inPhysicalMemory = inPhysicalMemory;
     }
 
-    public int getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
-    public int getLastAccess() {
-        return lastAccess;
-    }
-
-    public void setLastAccess(int lastAccess) {
-        this.lastAccess = lastAccess;
-    }
-
-    public int getSecondChance() {
+    public boolean getSecondChance() {
         return secondChance;
     }
 
-    public void setSecondChance(int secondChance) {
+    public void setSecondChance(boolean secondChance) {
         this.secondChance = secondChance;
     }
 
+    public Instant getLastUsage() {
+        return lastUsage;
+    }
+
+    public void setLastUsage(Instant lastUsage) {
+        this.lastUsage = lastUsage;
+    }
+
+    public int getSpaceUsed() {
+        return spaceUsed;
+    }
+
+    public void setSpaceUsed(int spaceUsed) {
+        this.spaceUsed = spaceUsed;
+    }
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -86,4 +100,17 @@ public class Page {
         final Page other = (Page) obj;
         return this.pageId == other.pageId;
     }
+    
+    @Override
+    public Page clone(){
+        Page page = new Page(this.pageId, this.physicalAddress, this.inPhysicalMemory, this.spaceUsed);
+        page.setTimestamp(this.getTimestamp());
+        page.setLastUsage(this.getLastUsage());
+        page.setSecondChance(this.getSecondChance());
+        return page;
+    }
+    
+    
+    
+    
 }
