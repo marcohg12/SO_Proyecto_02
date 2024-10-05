@@ -29,6 +29,7 @@ public class Simulation {
             paginationAlgorithm = new RND();
         }
         else if (algoType == PaginationAlgoType.OPT_ALGO){
+            paginationAlgorithm = new OPT(instructions);
         }
         
         computer = new Computer(paginationAlgorithm);

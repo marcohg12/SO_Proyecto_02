@@ -29,15 +29,18 @@ public class RND implements PaginationAlgorithm {
         mmu.incrementClock(5);
         mmu.incrementThrashing(5);
         
-        // Insertamos la página en un marco aleatorio
-        Random random = new Random();
-        int randAddress = random.nextInt(100);
+        // Verificamos si hay espacio vacío en la memoria
+        int emptyAddress = mmu.getEmptyAddress();
         
-        if (physicalMem[randAddress] == null){
-            mmu.insertPageInAddress(page, randAddress);
-        } else {
+        if (emptyAddress == -1){
+            // Insertamos la página en un marco aleatorio si no hay espacio
+            // vacío
+            Random random = new Random();
+            int randAddress = random.nextInt(100);
             Page out = physicalMem[randAddress];
             mmu.swapPages(page, out);
-        }           
+        } else {
+            mmu.insertPageInAddress(page, emptyAddress);
+        }          
     }   
 }

@@ -21,7 +21,7 @@ public class Memory_Simulator {
         instructions.add("kill(1)");
         instructions.add("kill(2)");
         instructions.add("kill(3)");
-        Simulation simulation = new Simulation(PaginationAlgoType.FIFO_ALGO, instructions);
+        Simulation simulation = new Simulation(PaginationAlgoType.SC_ALGO, instructions);
         int i = 0;
         while (simulation.executeNext()){
             ComputerState state = simulation.getState();

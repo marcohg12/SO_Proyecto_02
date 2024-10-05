@@ -3,6 +3,7 @@ package memory_simulator.model;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import memory_simulator.logic.OPT;
 import memory_simulator.logic.PaginationAlgorithm;
 
 public class MMU {
@@ -23,7 +24,7 @@ public class MMU {
         physicalMemSize = 400;
         pageSize = 4;
         pageCount = 0;
-        pointerCount = 0;
+        pointerCount = 1;
         clock = 0;
         thrashing = 0;
         maxPagesInPhysicalMem = physicalMemSize / pageSize;
@@ -69,6 +70,7 @@ public class MMU {
     
     /**
      * Crea las páginas necesarias para un proceso
+     * @param processId El ID del proceso que solicita la memoria
      * @param size El tamaño en KB del proceso
      * @return Un puntero al mapa de memoria. El puntero es la llave del mapa para
      * la lista de páginas creadas para el proceso
@@ -143,6 +145,10 @@ public class MMU {
         
         for (Page page : pages){
             paginationAlgorithm.usePage(this, page);
+        }
+        
+        if (paginationAlgorithm instanceof OPT){
+            ((OPT)paginationAlgorithm).removeUsage();
         }
     }
 
