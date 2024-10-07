@@ -155,10 +155,10 @@ public class InstructionSetGenerator {
      * @param filePath La ruta del archivo a leer.
      * @return Un ArrayList con las líneas del archivo.
      */
-    public static List<String> readFileToArrayList(String filePath) {
-        List<String> lines = new ArrayList<>();
+    public static ArrayList<String> readFileToArrayList(String filePath) {
+        ArrayList<String> lines = new ArrayList<>();
         try {
-            lines = Files.readAllLines(Paths.get(filePath));
+            lines = (ArrayList<String>) Files.readAllLines(Paths.get(filePath));
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }
