@@ -36,7 +36,7 @@ public class InstructionSetGenerator {
     private int pointerCount;  
     
     // Nombre del archivo de salida
-    private String outputFileName;  
+    private static final String OUTPUT_FILE_NAME = "instructions.txt"; 
 
     public InstructionSetGenerator(int seed, int numProcesses, int numOperations) {
         this.numProcesses = numProcesses;
@@ -59,14 +59,15 @@ public class InstructionSetGenerator {
         this.remainingKillInstructions = (int) (numProcesses * 0.4);
 
         this.pointerCount = 0;  
-        this.outputFileName = "instructions.txt";  // Nombre del archivo de salida
+        
     }
 
-    
-    //Genera un archivo de instrucciones según las reglas definidas.
-    public void generateFile() {
-        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputFileName))) {
-            int operationCounter = 0;
+   
+    public List<String> generateInstructions() {
+        List<String> instructions = new ArrayList<>();
+        int operationCounter = 0;
+
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(OUTPUT_FILE_NAME))) {
 
             while (operationCounter < numOperations) {
                 // Seleccionamos una instrucción aleatoria, pero controlando cada operación
@@ -74,7 +75,9 @@ public class InstructionSetGenerator {
                     // Operación "new": Crea un nuevo proceso si hay procesos activos disponibles
                     int processId = getRandomElement(activeProcesses);
                     int size = random.nextInt(20001) + 5000;  // Tamaño aleatorio entre 5,000 y 25,000
-                    fileWriter.write("new(" + processId + "," + size + ")\n");
+                    String instruction = "new(" + processId + "," + size + ")";
+                    instructions.add(instruction);
+                    fileWriter.write(instruction + "\n");
 
                     // Incrementar el contador de punteros y agregarlo a los punteros activos
                     pointerCount++;
@@ -89,7 +92,9 @@ public class InstructionSetGenerator {
                 if (!activePointers.isEmpty() && random.nextInt(2) == 0) {
                     // Operación "use": Utiliza un puntero activo
                     int pointer = getRandomElement(activePointers);
-                    fileWriter.write("use(" + pointer + ")\n");
+                    String instruction = "use(" + pointer + ")";
+                    instructions.add(instruction);
+                    fileWriter.write(instruction + "\n");
                     operationCounter++;
                 }
 
@@ -101,7 +106,9 @@ public class InstructionSetGenerator {
                     // Encontrar el proceso al que pertenece el puntero
                     processToPointerMap.values().forEach(pointers -> pointers.remove(pointer));
 
-                    fileWriter.write("delete(" + pointer + ")\n");
+                    String instruction = "delete(" + pointer + ")";
+                    instructions.add(instruction);
+                    fileWriter.write(instruction + "\n");
                     operationCounter++;
                 }
 
@@ -112,7 +119,6 @@ public class InstructionSetGenerator {
 
                     // Eliminar todos los punteros asociados a este proceso
                     Set<Integer> pointersToRemove = processToPointerMap.get(processId);
-                    // Elimina los punteros de activePointers
                     pointersToRemove.forEach(activePointers::remove);  
                     
                     // Elimina el proceso de la tabla de símbolos
@@ -124,7 +130,9 @@ public class InstructionSetGenerator {
                     // Remover de la lista de procesos que pueden ser matados
                     processesReadyToKill.remove(processId);  
 
-                    fileWriter.write("kill(" + processId + ")\n");
+                    String instruction = "kill(" + processId + ")";
+                    instructions.add(instruction);
+                    fileWriter.write(instruction + "\n");
                     operationCounter++;
                 }
             }
@@ -134,16 +142,19 @@ public class InstructionSetGenerator {
                 int processId = processesReadyToKill.iterator().next();
                 processesReadyToKill.remove(processId);
 
-                fileWriter.write("kill(" + processId + ")\n");
+                String instruction = "kill(" + processId + ")";
+                instructions.add(instruction);
+                fileWriter.write(instruction + "\n");
             }
 
         } catch (IOException e) {
             System.err.println("Error al escribir el archivo: " + e.getMessage());
         }
+
+        return instructions;
     }
 
-    
-     //Obtiene un elemento aleatorio de la colección.
+    // Obtiene un elemento aleatorio de la colección.
     private <T> T getRandomElement(Set<T> set) {
         int randomIndex = random.nextInt(set.size());
         return new ArrayList<>(set).get(randomIndex);
