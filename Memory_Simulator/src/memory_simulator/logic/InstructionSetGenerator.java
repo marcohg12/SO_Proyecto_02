@@ -1,135 +1,167 @@
 package memory_simulator.logic;
 
-import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class InstructionSetGenerator {
-    private int numProcesses;
-    private int numOperations;
-    private Random random;  // Generador de números aleatorios
+    // Número de procesos
+    private int numProcesses;  
+    
+    // Número de operaciones a generar
+    private int numOperations; 
+    
+    // Generador de números aleatorios
+    private Random random;  
+    
+    // Procesos activos 
+    private Set<Integer> activeProcesses;  
+    
+    // Procesos que se pueden matar
+    private Set<Integer> processesReadyToKill;  
+    
+    // Mapa de procesos a punteros
+    private Map<Integer, Set<Integer>> processToPointerMap;  
+    
+    // Punteros activos
+    private Set<Integer> activePointers;  
+    
+    // Número de instrucciones "kill" 
+    private int remainingKillInstructions; 
+    
+    // Contador de punteros
+    private int pointerCount;  
+    
+    // Nombre del archivo de salida
+    private String outputFileName;  
 
     public InstructionSetGenerator(int seed, int numProcesses, int numOperations) {
         this.numProcesses = numProcesses;
         this.numOperations = numOperations;
-
-        // Semilla para repetir escenario
         this.random = new Random(seed);
+
+        // Inicializar las estructuras de datos
+        this.activeProcesses = new HashSet<>();
+        this.processesReadyToKill = new HashSet<>();
+        this.processToPointerMap = new HashMap<>();
+        this.activePointers = new HashSet<>();
+
+        // Inicializar los procesos activos
+        for (int i = 1; i <= numProcesses; i++) {
+            activeProcesses.add(i);
+            processToPointerMap.put(i, new HashSet<>());
+        }
+
+        // Definir cuántas instrucciones "kill" son permitidas 
+        this.remainingKillInstructions = (int) (numProcesses * 0.4);
+
+        this.pointerCount = 0;  
+        this.outputFileName = "instructions.txt";  // Nombre del archivo de salida
     }
 
-    public ArrayList<String> generateInstructionSet() {
-        // Lista para almacenar las instrucciones generadas
-        ArrayList<String> instructions = new ArrayList<>();
-        
-        // Mapa para relacionar procesos(pid) con los punteros(ptr)
-        HashMap<Integer, ArrayList<Integer>> processPointers = new HashMap<>();
-        
-        // Lista para almacenar punteros disponibles para usar y eliminar
-        ArrayList<Integer> availablePointers = new ArrayList<>();
-        
-        // Lista para almacenar los procesos activos
-        ArrayList<Integer> activeProcesses = new ArrayList<>();
-        
-        // Lista para almacenar los procesos que han sido "matados" con la operación kill
-        ArrayList<Integer> killedProcesses = new ArrayList<>();
-        
-        // Lista para almacenar punteros que han sido eliminados
-        ArrayList<Integer> deletedPointers = new ArrayList<>();
-        
-        int operationCount = 0;
-        int pointerCount = 1;
+    
+    //Genera un archivo de instrucciones según las reglas definidas.
+    public void generateFile() {
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputFileName))) {
+            int operationCounter = 0;
 
-        // Generar operaciones
-        while (operationCount < numOperations) {
-            // Selecciona un proceso aleatorio(pid)
-            int pid = random.nextInt(numProcesses) + 1;
-            String instruction = "";
+            while (operationCounter < numOperations) {
+                // Seleccionamos una instrucción aleatoria, pero controlando cada operación
+                if (!activeProcesses.isEmpty() && random.nextInt(3) == 0) {
+                    // Operación "new": Crea un nuevo proceso si hay procesos activos disponibles
+                    int processId = getRandomElement(activeProcesses);
+                    int size = random.nextInt(20001) + 5000;  // Tamaño aleatorio entre 5,000 y 25,000
+                    fileWriter.write("new(" + processId + "," + size + ")\n");
 
-            // Si el proceso ha sido eliminado, no hacer nada y continuar
-            if (killedProcesses.contains(pid)) {
-                continue;
-            }
-
-            // iSi el proceso esta activo, generar operaciones
-            if (activeProcesses.contains(pid)) {
-                
-                int action = random.nextInt(3); // 0: use, 1: delete, 2: kill
-
-                // Operación "use": utiliza un puntero si es válido
-                if (action == 0 && !availablePointers.isEmpty()) {
-                    // Selecciona un puntero aleatorio asociado al proceso (pid)
-                    int ptr = availablePointers.get(random.nextInt(availablePointers.size()));
-                    
-                    // Verifica si el puntero no ha sido eliminado
-                    if (processPointers.containsKey(pid) && processPointers.get(pid).contains(ptr) && !deletedPointers.contains(ptr)) {
-                        instruction = "use(" + ptr + ")";
-                    } else {
-                        continue; // Si el puntero ha sido eliminado, continua
-                    }
-                  
-                 // Operación "delete": elimina un puntero si es válido  
-                } else if (action == 1 && !availablePointers.isEmpty()) {
-                    // Selecciona un puntero aleatorio asociado al proceso (pid)
-                    int ptr = availablePointers.get(random.nextInt(availablePointers.size()));
-                    
-                    // Verifica si el puntero no ha sido eliminado
-                    if (processPointers.containsKey(pid) && processPointers.get(pid).contains(ptr) && !deletedPointers.contains(ptr)) {
-                        instruction = "delete(" + ptr + ")";
-                        deletedPointers.add(ptr);
-                        availablePointers.remove(Integer.valueOf(ptr)); // Elimina el puntero de los disponibles
-                    } else {
-                        continue;
-                    }
-                 // Operación "kill": elimina el proceso y todos sus punteros
-                } else if (action == 2) {
-                    // Termina los procesos con "kill"
-                    instruction = "kill(" + pid + ")";
-                    activeProcesses.remove(Integer.valueOf(pid));
-                    killedProcesses.add(pid); // Añade el proceso a la lista de procesos "matados"
-
-                    // Elimina todos los punteros asociados al proceso (pid)
-                    ArrayList<Integer> pointersToRemove = processPointers.remove(pid);
-                    if (pointersToRemove != null) {
-                        availablePointers.removeAll(pointersToRemove);
-                        deletedPointers.addAll(pointersToRemove);
-                    }
-                }
-            } else {
-                // Si el proceso no está activo, generar una operación "new"
-                if (!killedProcesses.contains(pid)) {
-                    int size = random.nextInt(1000) + 1;
-                    instruction = "new(" + pid + "," + size + ")";
-                    activeProcesses.add(pid);
-
-                    // Asigna un nuevo puntero al proceso y lo añade al mapa de punteros
-                    ArrayList<Integer> pointers = processPointers.getOrDefault(pid, new ArrayList<>());
-                    pointers.add(pointerCount);
-                    processPointers.put(pid, pointers);
-                    availablePointers.add(pointerCount); // Añade el puntero a la lista de disponibles
+                    // Incrementar el contador de punteros y agregarlo a los punteros activos
                     pointerCount++;
+                    activePointers.add(pointerCount);
+                    processToPointerMap.get(processId).add(pointerCount);
+
+                    // Añadir el proceso a la lista de procesos que pueden ser "matados"
+                    processesReadyToKill.add(processId);
+                    operationCounter++;
+                }
+
+                if (!activePointers.isEmpty() && random.nextInt(2) == 0) {
+                    // Operación "use": Utiliza un puntero activo
+                    int pointer = getRandomElement(activePointers);
+                    fileWriter.write("use(" + pointer + ")\n");
+                    operationCounter++;
+                }
+
+                if (!activePointers.isEmpty() && random.nextInt(2) == 1) {
+                    // Operación "delete": Elimina un puntero activo
+                    int pointer = getRandomElement(activePointers);
+                    activePointers.remove(pointer);  // Eliminar el puntero de la lista de activos
+
+                    // Encontrar el proceso al que pertenece el puntero
+                    processToPointerMap.values().forEach(pointers -> pointers.remove(pointer));
+
+                    fileWriter.write("delete(" + pointer + ")\n");
+                    operationCounter++;
+                }
+
+                if (!processesReadyToKill.isEmpty() && remainingKillInstructions > 0 && random.nextInt(3) == 1) {
+                    // Operación "kill": Elimina un proceso si es permitido
+                    remainingKillInstructions--;
+                    int processId = getRandomElement(processesReadyToKill);
+
+                    // Eliminar todos los punteros asociados a este proceso
+                    Set<Integer> pointersToRemove = processToPointerMap.get(processId);
+                    // Elimina los punteros de activePointers
+                    pointersToRemove.forEach(activePointers::remove);  
+                    
+                    // Elimina el proceso de la tabla de símbolos
+                    processToPointerMap.remove(processId);  
+                    
+                    // Elimina el proceso de los procesos activos
+                    activeProcesses.remove(processId);  
+                    
+                    // Remover de la lista de procesos que pueden ser matados
+                    processesReadyToKill.remove(processId);  
+
+                    fileWriter.write("kill(" + processId + ")\n");
+                    operationCounter++;
                 }
             }
 
-            // Asegura de que la instrucción sea válida y se anade a la lista
-            if (!instruction.isEmpty()) {
-                instructions.add(instruction);
-                operationCount++;
+            // Matar los procesos que aún no se han matado
+            while (!processesReadyToKill.isEmpty()) {
+                int processId = processesReadyToKill.iterator().next();
+                processesReadyToKill.remove(processId);
+
+                fileWriter.write("kill(" + processId + ")\n");
             }
+
+        } catch (IOException e) {
+            System.err.println("Error al escribir el archivo: " + e.getMessage());
         }
-        return instructions;
     }
 
-    public void saveInstructionSetToFile(String fileName, ArrayList<String> instructions) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            for (String instruction : instructions) {
-                writer.write(instruction);
-                writer.newLine(); // nueva línea para cada instrucción
-            }
+    
+     //Obtiene un elemento aleatorio de la colección.
+    private <T> T getRandomElement(Set<T> set) {
+        int randomIndex = random.nextInt(set.size());
+        return new ArrayList<>(set).get(randomIndex);
+    }
+    
+    /**
+     * Lee un archivo de texto y convierte sus líneas en un ArrayList<String>.
+     *
+     * @param filePath La ruta del archivo a leer.
+     * @return Un ArrayList con las líneas del archivo.
+     */
+    public static List<String> readFileToArrayList(String filePath) {
+        List<String> lines = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(Paths.get(filePath));
         } catch (IOException e) {
-            System.err.println("Error escribiendo el archivo: " + e.getMessage());
+            System.err.println("Error al leer el archivo: " + e.getMessage());
         }
+        return lines;
     }
 }
