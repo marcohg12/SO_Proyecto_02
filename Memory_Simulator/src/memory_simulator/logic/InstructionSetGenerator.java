@@ -38,6 +38,7 @@ public class InstructionSetGenerator {
     // Nombre del archivo de salida
     private static final String OUTPUT_FILE_NAME = "instructions.txt"; 
 
+    // Recibe semilla, numero de procesos y numero de operaciones
     public InstructionSetGenerator(int seed, int numProcesses, int numOperations) {
         this.numProcesses = numProcesses;
         this.numOperations = numOperations;
