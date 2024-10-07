@@ -5,8 +5,8 @@ import java.time.Instant;
 public class Page {
     
     private int pageId;
-    private int physicalAddress;
-    private boolean inPhysicalMemory;
+    private int physicalAddress; // Indice para la RAM
+    private boolean inPhysicalMemory; //LOADED
     private Instant timestamp;
     private Instant lastUsage;
     private boolean secondChance;

@@ -64,8 +64,8 @@ public class InstructionSetGenerator {
     }
 
    
-    public List<String> generateInstructions() {
-        List<String> instructions = new ArrayList<>();
+    public ArrayList<String> generateInstructions() {
+        ArrayList<String> instructions = new ArrayList<>();
         int operationCounter = 0;
 
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(OUTPUT_FILE_NAME))) {

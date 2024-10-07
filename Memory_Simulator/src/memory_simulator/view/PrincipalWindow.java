@@ -25,7 +25,6 @@ import static memory_simulator.model.PaginationAlgoType.SC_ALGO;
  */
 public class PrincipalWindow extends javax.swing.JFrame {
     
-    Simulation simulator;
     InstructionSetGenerator generator;
     ArrayList<String> instructions;
     PaginationAlgoType algorithm;
@@ -121,7 +120,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         });
         buttonGenerate = new javax.swing.JButton();
         buttonLoad = new javax.swing.JButton();
-        GenerateSimulation = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -228,15 +227,15 @@ public class PrincipalWindow extends javax.swing.JFrame {
         });
         jPanel1.add(buttonLoad, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 570, -1, -1));
 
-        GenerateSimulation.setBackground(new java.awt.Color(153, 153, 153));
-        GenerateSimulation.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        GenerateSimulation.setText("Generar Simulación");
-        GenerateSimulation.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setBackground(new java.awt.Color(153, 153, 153));
+        jButton1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jButton1.setText("Generar Simulación");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GenerateSimulationActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(GenerateSimulation, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 640, -1, -1));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 640, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -279,7 +278,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         // No genera el instruction set a menos de que tenga una semilla válida
         if(errorFound == false){
             generator = new InstructionSetGenerator(seed, processes, operations);
-            generator.generateFile();
+            instructions = generator.generateInstructions();
             System.out.println("Terminó");
         }
     }//GEN-LAST:event_buttonGenerateActionPerformed
@@ -304,11 +303,11 @@ public class PrincipalWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_buttonLoadActionPerformed
 
-    private void GenerateSimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerateSimulationActionPerformed
-        SimulationWindow window = new SimulationWindow();
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        SimulationWindow window = new SimulationWindow(algorithm, instructions);
         window.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_GenerateSimulationActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -347,12 +346,12 @@ public class PrincipalWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton GenerateSimulation;
     private javax.swing.JButton buttonGenerate;
     private javax.swing.JButton buttonLoad;
     private javax.swing.JComboBox<String> comboBoxAlgorithm;
     private javax.swing.JComboBox<String> comboBoxOperations;
     private javax.swing.JComboBox<String> comboBoxProcesses;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

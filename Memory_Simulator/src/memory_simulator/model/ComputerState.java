@@ -15,10 +15,10 @@ public class ComputerState {
     private int loadedPages;
     private int unloadedPages;
     private int internalFragmentation;
-    private int usedMemory;
-    private int usedVMemory;
-    private double usedMemoryPerc;
-    private double usedVMemoryPerc;
+    private int usedMemory; // RAM KB
+    private int usedVMemory; // V-RAM KB
+    private double usedMemoryPerc; // RAM %
+    private double usedVMemoryPerc; // V_RAM %
     private double thrashingPerc;
     private int physicalMemSize;
     
