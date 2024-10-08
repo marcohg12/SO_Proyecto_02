@@ -6,7 +6,11 @@ import memory_simulator.model.Page;
 
 public class RND implements PaginationAlgorithm {
     
-    public RND(){}
+    private int seed;
+    
+    public RND(int seed){
+        this.seed = seed;
+    }
    
     @Override
     public void usePage(MMU mmu, Page page) {
@@ -35,7 +39,7 @@ public class RND implements PaginationAlgorithm {
         if (emptyAddress == -1){
             // Insertamos la página en un marco aleatorio si no hay espacio
             // vacío
-            Random random = new Random();
+            Random random = new Random(seed);
             int randAddress = random.nextInt(100);
             Page out = physicalMem[randAddress];
             mmu.swapPages(page, out);
