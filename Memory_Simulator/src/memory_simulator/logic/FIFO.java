@@ -36,6 +36,7 @@ public class FIFO implements PaginationAlgorithm {
             
             // Si la página se encuentra en memoria principal lo
             // tomamos como un hit
+            //physicalMem[i].getPageId() == page.getPageId()
             if (physicalMem[i].getPageId() == page.getPageId()){
                 mmu.incrementClock(1);
                 return;
