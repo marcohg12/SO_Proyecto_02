@@ -130,4 +130,19 @@ public class InstructionSetGenerator {
         }
         return lines;
     }
+    
+    
+    
+    public static void writeInstructionsToFile(ArrayList<String> instructions) {
+    String fileName = "instructions.txt"; // Nombre del archivo
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+        for (String instruction : instructions) {
+            writer.write(instruction);
+            writer.newLine();
+        }
+        System.out.println("Instrucciones guardadas exitosamente en el archivo: " + fileName);
+    } catch (IOException e) {
+        System.out.println("Ocurrió un error al escribir el archivo: " + e.getMessage());
+        }
+    }  
 }
