@@ -19,15 +19,11 @@ import static memory_simulator.model.PaginationAlgoType.MRU_ALGO;
 import static memory_simulator.model.PaginationAlgoType.RND_ALGO;
 import static memory_simulator.model.PaginationAlgoType.SC_ALGO;
 
-
-/**
- * @author paubo
- */
 public class PrincipalWindow extends javax.swing.JFrame {
     
-    InstructionSetGenerator generator;
     ArrayList<String> instructions;
     PaginationAlgoType algorithm;
+    int seed;
 
     public PrincipalWindow() {
         initComponents();
@@ -266,7 +262,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         
         int processes = Integer.parseInt((String) comboBoxProcesses.getSelectedItem());
         int operations = Integer.parseInt((String) comboBoxOperations.getSelectedItem());
-        int seed = 0;
+        seed = 0;
         
         try{
             seed = Integer.parseInt(textRandomSeed.getText());
@@ -277,8 +273,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         
         // No genera el instruction set a menos de que tenga una semilla válida
         if(errorFound == false){
-            generator = new InstructionSetGenerator(seed, processes, operations);
-            instructions = generator.generateInstructions();
+            instructions =  InstructionSetGenerator.getInstructionSet(seed, processes, operations);
             System.out.println("Terminó");
         }
     }//GEN-LAST:event_buttonGenerateActionPerformed
@@ -296,7 +291,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
             String filePath = selectedFile.getAbsolutePath();
             System.out.println("Selected file path: " + filePath);
     
-            instructions = generator.readFileToArrayList(filePath);
+            instructions = InstructionSetGenerator.readFileToArrayList(filePath);
             System.out.println(instructions.toString());
         }else{
             JOptionPane.showMessageDialog(null, "No se seleccionó un archivo", "Error", JOptionPane.ERROR_MESSAGE);
@@ -304,7 +299,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonLoadActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        SimulationWindow window = new SimulationWindow(algorithm, instructions);
+        SimulationWindow window = new SimulationWindow(algorithm, instructions, seed);
         window.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed

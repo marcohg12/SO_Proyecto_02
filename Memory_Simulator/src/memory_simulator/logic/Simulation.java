@@ -14,7 +14,7 @@ public class Simulation {
     private ArrayList<String> instructions;
     private int index;
     
-    public Simulation(PaginationAlgoType algoType, ArrayList<String> instructions){
+    public Simulation(PaginationAlgoType algoType, ArrayList<String> instructions, int seed){
         
         if (algoType == PaginationAlgoType.FIFO_ALGO){
             paginationAlgorithm = new FIFO();
@@ -26,7 +26,7 @@ public class Simulation {
             paginationAlgorithm = new SC();
         }
         else if (algoType == PaginationAlgoType.RND_ALGO){
-            paginationAlgorithm = new RND();
+            paginationAlgorithm = new RND(seed);
         }
         else if (algoType == PaginationAlgoType.OPT_ALGO){
             paginationAlgorithm = new OPT(instructions);

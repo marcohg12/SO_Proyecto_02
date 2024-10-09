@@ -15,6 +15,7 @@ public class MMU {
     private HashMap<Integer, ArrayList<Page>> memMap;
     private int pageSize;
     private int pageCount;
+    private int vPageCount;
     private int pointerCount;
     private int clock;
     private int thrashing;
@@ -25,6 +26,7 @@ public class MMU {
         pageSize = 4;
         pageCount = 0;
         pointerCount = 1;
+        vPageCount = 0;
         clock = 0;
         thrashing = 0;
         maxPagesInPhysicalMem = physicalMemSize / pageSize;
@@ -61,7 +63,9 @@ public class MMU {
         // Si no se pudo insertar en memoria física, entonces se inserta
         // en memoria virtual
         Page page = new Page(pageCount, -1, false, spaceUsed, processId);
+        page.setVirtualAddress(vPageCount);
         pageCount += 1;
+        vPageCount += 1;
         clock += 5;
         virtualMem.add(page);
         
@@ -77,6 +81,8 @@ public class MMU {
      */
     public int createPagesForProcess(int processId, int size){
         
+        int pointer = pointerCount;
+        
         // Calculamos la cantidad de páginas necesarias para el proceso
         int pagesRequired = size / pageSize;
         if (size % 4 != 0){
@@ -88,16 +94,17 @@ public class MMU {
         // Insertamos las páginas
         for (int i = 0; i < pagesRequired - 1; i++){
             Page page = insertPage(processId, 4);
+            page.setPointer(pointer);
             createdPages.add(page); 
         }
         Page page = insertPage(processId, size % 4);
+        page.setPointer(pointer);
         createdPages.add(page); 
         
         // Creamos el puntero e insertamos las páginas creadas asociadas 
         // al puntero en el mapa de memoria
-        int pointer = pointerCount;
-        pointerCount += 1;
         memMap.put(pointer, createdPages);
+        pointerCount += 1;
         return pointer;     
     }
     
@@ -211,7 +218,7 @@ public class MMU {
         in.setInPhysicalMemory(true);
         out.setInPhysicalMemory(false);
         in.setPhysicalAddress(out.getPhysicalAddress());
-        out.setPhysicalAddress(-1);
+        out.setVirtualAddress(in.getVirtualAddress());
     }
     
     public int getEmptyAddress(){

@@ -12,6 +12,9 @@ public class Page {
     private boolean secondChance;
     private int spaceUsed;
     private int processId;
+    private int virtualAddress;
+    private int pointer;
+    private int loadedTime;
     
     public Page(int pageId, int physicalAddress, boolean inPhysicalMemory, int spaceUsed, int processId){
         this.pageId = pageId;
@@ -86,6 +89,30 @@ public class Page {
 
     public void setProcessId(int processId) {
         this.processId = processId;
+    }
+
+    public int getVirtualAddress() {
+        return virtualAddress;
+    }
+
+    public void setVirtualAddress(int virtualAddress) {
+        this.virtualAddress = virtualAddress;
+    }
+
+    public int getPointer() {
+        return pointer;
+    }
+
+    public void setPointer(int pointer) {
+        this.pointer = pointer;
+    }
+
+    public int getLoadedTime() {
+        return loadedTime;
+    }
+
+    public void setLoadedTime(int loadedTime) {
+        this.loadedTime = loadedTime;
     }
      
     @Override

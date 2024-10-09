@@ -18,9 +18,9 @@ public class SimulationWindow extends javax.swing.JFrame {
 
     Simulation simulator;
     
-    public SimulationWindow(PaginationAlgoType algoType, ArrayList<String> instructions) {
+    public SimulationWindow(PaginationAlgoType algoType, ArrayList<String> instructions, int seed) {
         
-        simulator = new Simulation(algoType, instructions);
+        simulator = new Simulation(algoType, instructions, seed);
         // Columnas y datos de la tabla
         String[] columnNames = {"PAGE ID", "PID", "LOADED", "L-ADDR", "M-ADDR", "D-ADDR", "LOADED-T", "MARK"};
         Object[][] data = {
@@ -116,7 +116,7 @@ public class SimulationWindow extends javax.swing.JFrame {
             public void run() {
             PaginationAlgoType algoType = PaginationAlgoType.FIFO_ALGO;  
             ArrayList<String> instructions = new ArrayList<>();
-                new SimulationWindow(algoType, instructions).setVisible(true);
+                new SimulationWindow(algoType, instructions, 1).setVisible(true);
             }
         });
     }
