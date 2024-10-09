@@ -47,6 +47,10 @@ public class FIFO implements PaginationAlgorithm {
         mmu.incrementClock(5);
         mmu.incrementThrashing(5);
         
+        // Actualizamos el timestamp de la página al
+        // momento en que se cargó de memoria virtual
+        page.setTimestamp(Instant.now());
+        
         // Verificamos si hay espacio vacío en la memoria
         int emptyAddress = mmu.getEmptyAddress();
         
@@ -54,12 +58,10 @@ public class FIFO implements PaginationAlgorithm {
             // Si no hay espacio, intercambiamos con la página más vieja
             // (equivalente a la primera en la cola)
             Page out = getOldestPage(mmu);
-            page.setTimestamp(Instant.now());
             mmu.swapPages(page, out);
         } else {
             // Si hay un espacio vacío entonces insertamos la página en
             // esa dirección
-            page.setTimestamp(Instant.now());
             mmu.insertPageInAddress(page, emptyAddress);
         }
     } 

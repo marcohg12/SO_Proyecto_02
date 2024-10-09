@@ -19,7 +19,7 @@ public class SC implements PaginationAlgorithm {
             // tomamos como un hit
             if (physicalMem[i].getPageId() == page.getPageId()){
                 mmu.incrementClock(1);
-                physicalMem[i].setSecondChance(true);
+                physicalMem[i].setSecondChance(true); // Actualizamos el bit de second chance
                 return;
             }
         }

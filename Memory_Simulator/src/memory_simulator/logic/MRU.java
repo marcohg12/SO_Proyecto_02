@@ -37,7 +37,7 @@ public class MRU implements PaginationAlgorithm {
             // Si la página se encuentra en memoria principal lo
             // tomamos como un hit
             if (physicalMem[i].getPageId() == page.getPageId()){
-                physicalMem[i].setLastUsage(Instant.now());
+                physicalMem[i].setLastUsage(Instant.now()); // Actualizamos el timestamp de uso
                 mmu.incrementClock(1);
                 return;
             }
@@ -48,6 +48,9 @@ public class MRU implements PaginationAlgorithm {
         mmu.incrementClock(5);
         mmu.incrementThrashing(5);
         
+        // Actualizamos el timestamp de uso de la página
+        page.setLastUsage(Instant.now());
+        
         // Verificamos si hay espacio vacío en la memoria
         int emptyAddress = mmu.getEmptyAddress();
         
@@ -55,12 +58,10 @@ public class MRU implements PaginationAlgorithm {
             // Si no hay espacio, intercambiamos con la página más recientemente
             // usada
             Page out = getMostRecentlyUsed(mmu);
-            page.setLastUsage(Instant.now());
             mmu.swapPages(page, out);
         } else {
             // Si hay un espacio vacío entonces insertamos la página en
             // esa dirección
-            page.setLastUsage(Instant.now());
             mmu.insertPageInAddress(page, emptyAddress);
         }
     }   
