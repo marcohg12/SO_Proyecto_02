@@ -26,31 +26,32 @@ import static memory_simulator.model.PaginationAlgoType.SC_ALGO;
  */
 public class SimulationWindow extends javax.swing.JFrame {
 
-    Simulation simulation;
+    Simulation simulationALGO;
+    Simulation simulationOPT;
     ArrayList<Color> colors; 
     PaginationAlgoType algorithm;
-
+    
     public SimulationWindow(PaginationAlgoType algoType, ArrayList<String> instructions, int seed){
-        
-        simulation = new Simulation(algoType, instructions, seed);
+        simulationALGO = new Simulation(algoType, instructions, seed);
+        simulationOPT = new Simulation(OPT_ALGO, instructions, seed);
         algorithm = algoType;
         initComponents();
         colors = new ArrayList<>();
         colorGenerator(colors);
         startSimulation();
     }
-    
+
     public final void startSimulation() {
-        // Usar SwingWorker para ejecutar la simulación en segundo plano
-        SwingWorker<Void, ComputerState> worker = new SwingWorker<Void, ComputerState>() {
+        // Primer SwingWorker para la simulación con algoType (simulationALGO)
+        SwingWorker<Void, ComputerState> workerALGO = new SwingWorker<Void, ComputerState>() {
 
             @Override
             protected Void doInBackground() throws Exception {
-                // Ejecutar la simulación en segundo plano
-                while (simulation.executeNext()) {
-                    ComputerState state = simulation.getState();
+                // Ejecutar la simulación ALGO en segundo plano
+                while (simulationALGO.executeNext()) {
+                    ComputerState state = simulationALGO.getState();
                     publish(state);  
-                    Thread.sleep(10);
+                    Thread.sleep(10);  // Pausa para simular tiempo de procesamiento
                 }
                 return null; 
             }
@@ -59,19 +60,50 @@ public class SimulationWindow extends javax.swing.JFrame {
             protected void process(java.util.List<ComputerState> states) {
                 if (!states.isEmpty()) {
                     ComputerState latestState = states.get(states.size() - 1);
-                    update(latestState); 
+                    updateALGO(latestState);  // Actualizar la simulación ALGO
                 }
             }
 
             @Override
             protected void done() {
-                System.out.println("Simulación finalizada");
+                System.out.println("Simulación ALGO finalizada");
             }
-    };
+        };
 
-    worker.execute();  
+        // Segundo SwingWorker para la simulación con OPT_ALGO (simulationOPT)
+        SwingWorker<Void, ComputerState> workerOPT = new SwingWorker<Void, ComputerState>() {
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Ejecutar la simulación OPT en segundo plano
+                while (simulationOPT.executeNext()) {
+                    ComputerState state = simulationOPT.getState();
+                    publish(state);  
+                    Thread.sleep(10);  // Pausa para simular tiempo de procesamiento
+                }
+                return null; 
+            }
+
+            @Override
+            protected void process(java.util.List<ComputerState> states) {
+                if (!states.isEmpty()) {
+                    ComputerState latestState = states.get(states.size() - 1);
+                    updateOPT(latestState);  // Actualizar la simulación OPT
+                }
+            }
+
+            @Override
+            protected void done() {
+                System.out.println("Simulación OPT finalizada");
+            }
+        };
+
+        // Ejecutar ambos SwingWorkers en paralelo
+        workerALGO.execute();
+        workerOPT.execute();
     }
-    public void update(ComputerState state){
+
+    public void updateOPT(ComputerState state){
         processesOPT.setText(String.valueOf(state.getNumberOfProcesses()));
         simTimeOPT.setText(String.valueOf(state.getClock()));
         ramkbOPT.setText(String.valueOf(state.getUsedMemory()));
@@ -83,11 +115,27 @@ public class SimulationWindow extends javax.swing.JFrame {
         trashingOPT.setText(String.valueOf(state.getThrashing()));
         trashingPerOPT.setText(String.valueOf(state.getThrashingPerc()));
         fragmentationOPT.setText(String.valueOf(state.getInternalFragmentation()));
-        updateTable(state.getAllPages());
+        updateTable(state.getAllPages(), jTableOPT);
+        //updateTable(state1.getAllPages(), jTableALGO);
+    }
+    
+    public void updateALGO(ComputerState state){
+        processesALGO.setText(String.valueOf(state.getNumberOfProcesses()));
+        simTimeALGO.setText(String.valueOf(state.getClock()));
+        ramkbALGO.setText(String.valueOf(state.getUsedMemory()));
+        ramperALGO.setText(String.valueOf(state.getUsedMemoryPerc()));
+        vRamkbALGO.setText(String.valueOf(state.getUsedVMemory()));
+        vRamPerALGO.setText(String.valueOf(state.getUsedVMemoryPerc()));
+        pagesLoadedALGO.setText(String.valueOf(state.getLoadedPages()));
+        pagesUnloadedALGO.setText(String.valueOf(state.getUnloadedPages()));
+        trashingALGO.setText(String.valueOf(state.getThrashing()));
+        trashingPerALGO.setText(String.valueOf(state.getThrashingPerc()));
+        fragmentationALGO.setText(String.valueOf(state.getInternalFragmentation()));
+        updateTable(state.getAllPages(), jTableALGO);
     }
 
-       public void updateTable(ArrayList<Page> pages) {
-        DefaultTableModel model = (DefaultTableModel) jTableOPT.getModel();
+       public void updateTable(ArrayList<Page> pages, JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0); // Limpiar la tabla
 
         for (Page page : pages) {
@@ -196,36 +244,35 @@ public class SimulationWindow extends javax.swing.JFrame {
         fragmentationOPT = new javax.swing.JTextField();
         jTextField22 = new javax.swing.JTextField();
         jTextField23 = new javax.swing.JTextField();
-        jTextField24 = new javax.swing.JTextField();
-        jTextField25 = new javax.swing.JTextField();
+        processesALGO = new javax.swing.JTextField();
+        simTimeALGO = new javax.swing.JTextField();
         jTextField26 = new javax.swing.JTextField();
-        jTextField27 = new javax.swing.JTextField();
+        vRamkbALGO = new javax.swing.JTextField();
         jTextField28 = new javax.swing.JTextField();
         jTextField29 = new javax.swing.JTextField();
-        jTextField30 = new javax.swing.JTextField();
+        ramkbALGO = new javax.swing.JTextField();
         jTextField31 = new javax.swing.JTextField();
-        jTextField32 = new javax.swing.JTextField();
+        ramperALGO = new javax.swing.JTextField();
         jTextField33 = new javax.swing.JTextField();
         jScrollPaneOPT = new javax.swing.JScrollPane();
         jTableOPT = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
-        jTextField34 = new javax.swing.JTextField();
         trashingPerOPT = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField4 = new javax.swing.JTextField();
+        jScrollPaneALGO = new javax.swing.JScrollPane();
+        jTableALGO = new javax.swing.JTable();
+        vRamPerALGO = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
         jTextField9 = new javax.swing.JTextField();
         jTextField10 = new javax.swing.JTextField();
         jTextField11 = new javax.swing.JTextField();
-        jTextField12 = new javax.swing.JTextField();
-        jTextField16 = new javax.swing.JTextField();
+        pagesLoadedALGO = new javax.swing.JTextField();
+        pagesUnloadedALGO = new javax.swing.JTextField();
         jTextField17 = new javax.swing.JTextField();
         jTextField20 = new javax.swing.JTextField();
-        jTextField21 = new javax.swing.JTextField();
-        jTextField35 = new javax.swing.JTextField();
-        jTextField36 = new javax.swing.JTextField();
+        trashingALGO = new javax.swing.JTextField();
+        trashingPerALGO = new javax.swing.JTextField();
+        fragmentationALGO = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
@@ -240,11 +287,6 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField1.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField1.setText("Processes");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 560, 225, -1));
 
         jTextField2.setEditable(false);
@@ -271,11 +313,6 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField5.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField5.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField5.setText("RAM KB");
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 640, 112, -1));
 
         jTextField6.setEditable(false);
@@ -290,11 +327,6 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField7.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField7.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField7.setText("V-RAM KB");
-        jTextField7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField7ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField7, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 640, 112, -1));
 
         jTextField8.setEditable(false);
@@ -340,11 +372,6 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField14.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField14.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField14.setText("LOADED");
-        jTextField14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField14ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField14, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 720, 112, 25));
 
         jTextField15.setEditable(false);
@@ -377,7 +404,7 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField19.setBackground(new java.awt.Color(153, 153, 153));
         jTextField19.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField19.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField19.setText("Fragmentación  ");
+        jTextField19.setText("Fragmentation");
         jPanel1.add(jTextField19, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 700, 112, -1));
 
         trashingOPT.setEditable(false);
@@ -390,11 +417,6 @@ public class SimulationWindow extends javax.swing.JFrame {
         fragmentationOPT.setBackground(new java.awt.Color(255, 255, 255));
         fragmentationOPT.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         fragmentationOPT.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        fragmentationOPT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fragmentationOPTActionPerformed(evt);
-            }
-        });
         jPanel1.add(fragmentationOPT, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 720, 112, 45));
 
         jTextField22.setEditable(false);
@@ -411,67 +433,59 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField23.setText("Sim-Time");
         jPanel1.add(jTextField23, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 560, 225, -1));
 
-        jTextField24.setEditable(false);
-        jTextField24.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField24.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField24.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField24.setToolTipText("");
-        jPanel1.add(jTextField24, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 580, 225, -1));
+        processesALGO.setEditable(false);
+        processesALGO.setBackground(new java.awt.Color(255, 255, 255));
+        processesALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        processesALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        processesALGO.setToolTipText("");
+        jPanel1.add(processesALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 580, 225, -1));
 
-        jTextField25.setEditable(false);
-        jTextField25.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField25.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField25.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField25, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 580, 225, -1));
+        simTimeALGO.setEditable(false);
+        simTimeALGO.setBackground(new java.awt.Color(255, 255, 255));
+        simTimeALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        simTimeALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(simTimeALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 580, 225, -1));
 
+        jTextField26.setEditable(false);
         jTextField26.setBackground(new java.awt.Color(153, 153, 153));
         jTextField26.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField26.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField26.setText("RAM KB");
         jPanel1.add(jTextField26, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 640, 112, -1));
 
-        jTextField27.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField27.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField27.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField27ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jTextField27, new org.netbeans.lib.awtextra.AbsoluteConstraints(795, 660, 112, -1));
+        vRamkbALGO.setEditable(false);
+        vRamkbALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        vRamkbALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(vRamkbALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(795, 660, 112, -1));
 
+        jTextField28.setEditable(false);
         jTextField28.setBackground(new java.awt.Color(153, 153, 153));
         jTextField28.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField28.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField28.setText("RAM %");
         jPanel1.add(jTextField28, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 640, 112, -1));
 
+        jTextField29.setEditable(false);
         jTextField29.setBackground(new java.awt.Color(153, 153, 153));
         jTextField29.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField29.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField29.setText("V-RAM %");
-        jTextField29.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField29ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField29, new org.netbeans.lib.awtextra.AbsoluteConstraints(907, 640, 112, -1));
 
-        jTextField30.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField30.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField30, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 660, 112, -1));
+        ramkbALGO.setEditable(false);
+        ramkbALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        ramkbALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(ramkbALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 660, 112, -1));
 
         jTextField31.setText("jTextField31");
-        jTextField31.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField31ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField31, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 640, 110, -1));
 
-        jTextField32.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField32.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField32, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 660, 112, -1));
+        ramperALGO.setEditable(false);
+        ramperALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        ramperALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(ramperALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 660, 112, -1));
 
+        jTextField33.setEditable(false);
         jTextField33.setBackground(new java.awt.Color(153, 153, 153));
         jTextField33.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField33.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -507,30 +521,13 @@ public class SimulationWindow extends javax.swing.JFrame {
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 1070, 30));
 
-        jTextField34.setBackground(new java.awt.Color(153, 153, 153));
-        jTextField34.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField34.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField34.setText("MMU OPT");
-        jTextField34.setToolTipText("");
-        jTextField34.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField34ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jTextField34, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 510, -1));
-
         trashingPerOPT.setEditable(false);
         trashingPerOPT.setBackground(new java.awt.Color(255, 255, 255));
         trashingPerOPT.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         trashingPerOPT.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        trashingPerOPT.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                trashingPerOPTActionPerformed(evt);
-            }
-        });
         jPanel1.add(trashingPerOPT, new org.netbeans.lib.awtextra.AbsoluteConstraints(306, 720, 56, 45));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableALGO.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -549,19 +546,14 @@ public class SimulationWindow extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setPreferredSize(new java.awt.Dimension(600, 80));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPaneALGO.setViewportView(jTableALGO);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 160, 510, 340));
+        jPanel1.add(jScrollPaneALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 160, 510, 340));
 
-        jTextField4.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField4.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(907, 660, 112, -1));
+        vRamPerALGO.setEditable(false);
+        vRamPerALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        vRamPerALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(vRamPerALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(907, 660, 112, -1));
 
         jTextField3.setBackground(new java.awt.Color(153, 153, 153));
         jTextField3.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
@@ -569,61 +561,66 @@ public class SimulationWindow extends javax.swing.JFrame {
         jTextField3.setText("MMU ALGO");
         jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 140, 510, -1));
 
+        jTextField9.setEditable(false);
         jTextField9.setBackground(new java.awt.Color(153, 153, 153));
         jTextField9.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField9.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField9.setText("Pages");
-        jTextField9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField9ActionPerformed(evt);
-            }
-        });
         jPanel1.add(jTextField9, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 700, 224, -1));
 
+        jTextField10.setEditable(false);
         jTextField10.setBackground(new java.awt.Color(204, 204, 204));
         jTextField10.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField10.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField10.setText("LOADED");
         jPanel1.add(jTextField10, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 720, 112, -1));
 
+        jTextField11.setEditable(false);
         jTextField11.setBackground(new java.awt.Color(204, 204, 204));
         jTextField11.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField11.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField11.setText("UNLOADED");
         jPanel1.add(jTextField11, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 720, 114, -1));
 
-        jTextField12.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField12.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField12, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 740, 112, -1));
+        pagesLoadedALGO.setEditable(false);
+        pagesLoadedALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        pagesLoadedALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(pagesLoadedALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 740, 112, -1));
 
-        jTextField16.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField16.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField16, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 740, 114, -1));
+        pagesUnloadedALGO.setEditable(false);
+        pagesUnloadedALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        pagesUnloadedALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(pagesUnloadedALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 740, 114, -1));
 
+        jTextField17.setEditable(false);
         jTextField17.setBackground(new java.awt.Color(153, 153, 153));
         jTextField17.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField17.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextField17.setText("Trashing");
         jPanel1.add(jTextField17, new org.netbeans.lib.awtextra.AbsoluteConstraints(795, 700, 112, -1));
 
+        jTextField20.setEditable(false);
         jTextField20.setBackground(new java.awt.Color(153, 153, 153));
         jTextField20.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         jTextField20.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField20.setText("Fragmentación");
+        jTextField20.setText("Fragmentation");
         jPanel1.add(jTextField20, new org.netbeans.lib.awtextra.AbsoluteConstraints(907, 700, 112, -1));
 
-        jTextField21.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField21.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField21, new org.netbeans.lib.awtextra.AbsoluteConstraints(795, 720, 56, 42));
+        trashingALGO.setEditable(false);
+        trashingALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        trashingALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(trashingALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(795, 720, 56, 42));
 
-        jTextField35.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField35.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPanel1.add(jTextField35, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 720, 57, 42));
+        trashingPerALGO.setEditable(false);
+        trashingPerALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        trashingPerALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jPanel1.add(trashingPerALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 720, 57, 42));
 
-        jTextField36.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
-        jTextField36.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField36.setToolTipText("");
-        jPanel1.add(jTextField36, new org.netbeans.lib.awtextra.AbsoluteConstraints(907, 720, 112, 42));
+        fragmentationALGO.setEditable(false);
+        fragmentationALGO.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        fragmentationALGO.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        fragmentationALGO.setToolTipText("");
+        jPanel1.add(fragmentationALGO, new org.netbeans.lib.awtextra.AbsoluteConstraints(907, 720, 112, 42));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -644,54 +641,6 @@ public class SimulationWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jTextField7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField7ActionPerformed
-
-    private void jTextField27ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField27ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField27ActionPerformed
-
-    private void fragmentationOPTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fragmentationOPTActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fragmentationOPTActionPerformed
-
-    private void trashingPerOPTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trashingPerOPTActionPerformed
-
-    }//GEN-LAST:event_trashingPerOPTActionPerformed
-
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
-
-    private void jTextField14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField14ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField14ActionPerformed
-
-    private void jTextField34ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField34ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField34ActionPerformed
-
-    private void jTextField31ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField31ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField31ActionPerformed
-
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
-
-    private void jTextField29ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField29ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField29ActionPerformed
-
-    private void jTextField9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField9ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -732,59 +681,58 @@ public class SimulationWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField fragmentationALGO;
     private javax.swing.JTextField fragmentationOPT;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPaneALGO;
     private javax.swing.JScrollPane jScrollPaneOPT;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTableALGO;
     private javax.swing.JTable jTableOPT;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
     private javax.swing.JTextField jTextField13;
     private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField15;
-    private javax.swing.JTextField jTextField16;
     private javax.swing.JTextField jTextField17;
     private javax.swing.JTextField jTextField18;
     private javax.swing.JTextField jTextField19;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField20;
-    private javax.swing.JTextField jTextField21;
     private javax.swing.JTextField jTextField22;
     private javax.swing.JTextField jTextField23;
-    private javax.swing.JTextField jTextField24;
-    private javax.swing.JTextField jTextField25;
     private javax.swing.JTextField jTextField26;
-    private javax.swing.JTextField jTextField27;
     private javax.swing.JTextField jTextField28;
     private javax.swing.JTextField jTextField29;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField30;
     private javax.swing.JTextField jTextField31;
-    private javax.swing.JTextField jTextField32;
     private javax.swing.JTextField jTextField33;
-    private javax.swing.JTextField jTextField34;
-    private javax.swing.JTextField jTextField35;
-    private javax.swing.JTextField jTextField36;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
+    private javax.swing.JTextField pagesLoadedALGO;
     private javax.swing.JTextField pagesLoadedOPT;
+    private javax.swing.JTextField pagesUnloadedALGO;
     private javax.swing.JTextField pagesUnloadedOPT;
+    private javax.swing.JTextField processesALGO;
     private javax.swing.JTextField processesOPT;
+    private javax.swing.JTextField ramkbALGO;
     private javax.swing.JTextField ramkbOPT;
+    private javax.swing.JTextField ramperALGO;
     private javax.swing.JTextField ramperOPT;
+    private javax.swing.JTextField simTimeALGO;
     private javax.swing.JTextField simTimeOPT;
+    private javax.swing.JTextField trashingALGO;
     private javax.swing.JTextField trashingOPT;
+    private javax.swing.JTextField trashingPerALGO;
     private javax.swing.JTextField trashingPerOPT;
+    private javax.swing.JTextField vRamPerALGO;
     private javax.swing.JTextField vRamPerOPT;
+    private javax.swing.JTextField vRamkbALGO;
     private javax.swing.JTextField vRamkbOPT;
     // End of variables declaration//GEN-END:variables
 }
