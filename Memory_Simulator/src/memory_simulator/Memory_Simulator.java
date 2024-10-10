@@ -31,19 +31,20 @@ public class Memory_Simulator {
         int i = 0;
         while (simulation.executeNext()){
             ComputerState state = simulation.getState();
+            //System.out.println(state.getUsedMemoryPerc());
             i += 1;
             System.out.println(i);
         }*/
-        
+        /*
         int seed = 2;
         int numProcesses = 10;
         int numOperations = 500;
 
         // Crear una instancia del generador de instrucciones
-        InstructionSetGenerator generator = new InstructionSetGenerator(seed, numProcesses, numOperations);
+        //InstructionSetGenerator generator = new InstructionSetGenerator(seed, numProcesses, numOperations);
         
         // Generar las instrucciones y escribirlas en "instructions.txt"
-        List<String> instrucciones = generator.generateInstructions();
+        //List<String> instrucciones = generator.generateInstructions();
         
         // Mostrar las instrucciones generadas
         System.out.println("Instrucciones generadas:");
@@ -66,7 +67,7 @@ public class Memory_Simulator {
         }
         System.out.println(killCount); */
 
-        
+        /*
         ArrayList<String> instructionSet = InstructionSetGenerator.getInstructionSet(237462, 10, 5000);
         
         for (String s : instructionSet){
@@ -81,7 +82,7 @@ public class Memory_Simulator {
         }
         System.out.println(killCount);
 
-        
+        */
     }
     
 }

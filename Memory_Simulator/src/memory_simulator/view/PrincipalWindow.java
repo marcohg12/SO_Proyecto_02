@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -116,7 +118,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         });
         buttonGenerate = new javax.swing.JButton();
         buttonLoad = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        generateSimulation = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -125,34 +127,34 @@ public class PrincipalWindow extends javax.swing.JFrame {
         jPanel1.setPreferredSize(new java.awt.Dimension(1000, 700));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Georgia", 1, 30)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Microsoft YaHei", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Inicialización Simulador de Memoria");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabel1.setAlignmentY(0.0F);
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, 590, -1));
 
-        jLabel2.setFont(new java.awt.Font("Georgia", 1, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Microsoft YaHei", 1, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Semilla random ");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 90, -1, -1));
 
-        jLabel3.setFont(new java.awt.Font("Georgia", 1, 14)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Microsoft YaHei", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Algoritmo a simular ");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 180, -1, -1));
 
-        jLabel4.setFont(new java.awt.Font("Georgia", 1, 14)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Microsoft YaHei", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Número de procesos a simular");
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 260, -1, -1));
 
-        jLabel5.setFont(new java.awt.Font("Georgia", 1, 14)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Microsoft YaHei", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Número de operaciones a simular");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 350, -1, -1));
 
-        jLabel6.setFont(new java.awt.Font("Georgia", 1, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Microsoft YaHei", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Cargar un archivo con instrucciones");
         jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 540, -1, -1));
@@ -160,18 +162,18 @@ public class PrincipalWindow extends javax.swing.JFrame {
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/memory_simulator/view/images/ImagePrincipalWindow.png"))); // NOI18N
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 0, 380, 700));
 
-        jLabel9.setFont(new java.awt.Font("Georgia", 1, 14)); // NOI18N
+        jLabel9.setFont(new java.awt.Font("Microsoft YaHei", 1, 14)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Archivo");
         jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 440, -1, -1));
 
-        jLabel8.setFont(new java.awt.Font("Georgia", 1, 12)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Microsoft YaHei", 1, 12)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Generar un archivo de forma aleatoria");
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 470, -1, -1));
 
         textRandomSeed.setBackground(new java.awt.Color(153, 153, 153));
-        textRandomSeed.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        textRandomSeed.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         textRandomSeed.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         textRandomSeed.setDoubleBuffered(true);
         textRandomSeed.setDragEnabled(true);
@@ -181,57 +183,55 @@ public class PrincipalWindow extends javax.swing.JFrame {
                 textRandomSeedActionPerformed(evt);
             }
         });
-        jPanel1.add(textRandomSeed, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 100, -1));
+        jPanel1.add(textRandomSeed, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 100, 25));
 
         comboBoxAlgorithm.setBackground(new java.awt.Color(0, 0, 0));
-        comboBoxAlgorithm.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        comboBoxAlgorithm.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         comboBoxAlgorithm.setForeground(new java.awt.Color(255, 255, 255));
         comboBoxAlgorithm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FIFO", "SC", "MRU", "RND" }));
-        jPanel1.add(comboBoxAlgorithm, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 210, -1, -1));
+        jPanel1.add(comboBoxAlgorithm, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 210, 100, 25));
 
         comboBoxProcesses.setBackground(new java.awt.Color(0, 0, 0));
-        comboBoxProcesses.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        comboBoxProcesses.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         comboBoxProcesses.setForeground(new java.awt.Color(255, 255, 255));
         comboBoxProcesses.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10", "50", "100" }));
-        jPanel1.add(comboBoxProcesses, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 290, -1, -1));
+        jPanel1.add(comboBoxProcesses, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 290, 100, 25));
 
         comboBoxOperations.setBackground(new java.awt.Color(0, 0, 0));
-        comboBoxOperations.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        comboBoxOperations.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         comboBoxOperations.setForeground(new java.awt.Color(255, 255, 255));
         comboBoxOperations.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "500", "1000", "5000" }));
-        jPanel1.add(comboBoxOperations, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 380, -1, -1));
+        jPanel1.add(comboBoxOperations, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 380, 100, 25));
 
         buttonGenerate.setBackground(new java.awt.Color(153, 153, 153));
-        buttonGenerate.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        buttonGenerate.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         buttonGenerate.setText("Generar");
-        buttonGenerate.setHideActionText(true);
-        buttonGenerate.setOpaque(true);
         buttonGenerate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonGenerateActionPerformed(evt);
             }
         });
-        jPanel1.add(buttonGenerate, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 500, -1, -1));
+        jPanel1.add(buttonGenerate, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 500, 100, 25));
 
         buttonLoad.setBackground(new java.awt.Color(153, 153, 153));
-        buttonLoad.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        buttonLoad.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         buttonLoad.setText("Cargar");
         buttonLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonLoadActionPerformed(evt);
             }
         });
-        jPanel1.add(buttonLoad, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 570, -1, -1));
+        jPanel1.add(buttonLoad, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 570, 100, 25));
 
-        jButton1.setBackground(new java.awt.Color(153, 153, 153));
-        jButton1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
-        jButton1.setText("Generar Simulación");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        generateSimulation.setBackground(new java.awt.Color(153, 153, 153));
+        generateSimulation.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
+        generateSimulation.setText("Generar Simulación");
+        generateSimulation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                generateSimulationActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 640, -1, -1));
+        jPanel1.add(generateSimulation, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 640, 200, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -254,7 +254,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void textRandomSeedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textRandomSeedActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_textRandomSeedActionPerformed
 
     private void buttonGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonGenerateActionPerformed
@@ -274,7 +274,8 @@ public class PrincipalWindow extends javax.swing.JFrame {
         // No genera el instruction set a menos de que tenga una semilla válida
         if(errorFound == false){
             instructions =  InstructionSetGenerator.getInstructionSet(seed, processes, operations);
-            System.out.println("Terminó");
+            JOptionPane.showMessageDialog(null, "Se ha generado el archivo", "", JOptionPane.INFORMATION_MESSAGE);
+            InstructionSetGenerator.writeInstructionsToFile(instructions); 
         }
     }//GEN-LAST:event_buttonGenerateActionPerformed
 
@@ -298,11 +299,12 @@ public class PrincipalWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_buttonLoadActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void generateSimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSimulationActionPerformed
+        selectAlgorithm();
         SimulationWindow window = new SimulationWindow(algorithm, instructions, seed);
         window.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_generateSimulationActionPerformed
 
     /**
      * @param args the command line arguments
@@ -346,7 +348,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboBoxAlgorithm;
     private javax.swing.JComboBox<String> comboBoxOperations;
     private javax.swing.JComboBox<String> comboBoxProcesses;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton generateSimulation;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
