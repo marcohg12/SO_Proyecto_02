@@ -34,6 +34,7 @@ public class Computer {
         
         if (process == null){
             process = new Process(pId);
+            processes.add(process);
         }
         
         // Solicitamos la memoria para el proceso a la MMU

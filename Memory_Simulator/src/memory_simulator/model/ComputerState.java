@@ -5,7 +5,7 @@ import java.util.Collections;
 
 public class ComputerState {
     
-    private Page[] physicalMem;
+    private Page[] physicalMem; // Indice para la RAM
     private ArrayList<Page> virtualMem;
     private ArrayList<Page> allPages;
     private int clock;
