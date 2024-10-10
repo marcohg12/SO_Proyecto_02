@@ -34,6 +34,7 @@ public class Computer {
         
         if (process == null){
             process = new Process(pId);
+            processes.add(process);
         }
         
         // Solicitamos la memoria para el proceso a la MMU
@@ -41,6 +42,7 @@ public class Computer {
         
         // Guardamos el puntero en la lista de punteros del proceso
         process.insertPointer(pointer);
+        System.out.println("Created new process with ID: " + pId + ", Pointer: " + pointer);
     }
     
     public void executeDelete(int pointer){
