@@ -15,7 +15,7 @@ public class Memory_Simulator {
 
     public static void main(String[] args) {
         
-        /*ArrayList<String> instructions = new ArrayList();
+        ArrayList<String> instructions = new ArrayList();
         instructions.add("new(1,250)");
         instructions.add("new(1,50)");
         instructions.add("new(2,5320)");
@@ -33,8 +33,8 @@ public class Memory_Simulator {
             ComputerState state = simulation.getState();
             //System.out.println(state.getUsedMemoryPerc());
             i += 1;
-            System.out.println(i);
-        }*/
+            System.out.println(state.getPhysicalMem().toString());
+        }
         /*
         int seed = 2;
         int numProcesses = 10;
