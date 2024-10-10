@@ -25,11 +25,11 @@ public class ComputerState {
     public ComputerState(Page[] physicalMem, ArrayList<Page> virtualMem, 
                          int clock, int thrashing, ArrayList<Process> processes, int physicalMemSize){
         
-        this.physicalMem = new Page[physicalMem.length];
+        this.physicalMem = physicalMem;
         this.loadedPages = 0;
         this.unloadedPages = 0;
         this.clock = clock;
-        this.processes = new ArrayList();
+        this.processes = processes;
         this.numberOfProcesses = processes.size();
         this.thrashing = thrashing; 
         this.allPages = new ArrayList();
@@ -40,29 +40,8 @@ public class ComputerState {
         this.usedVMemoryPerc = 0.0;
         this.thrashingPerc = 0.0;
         this.physicalMemSize = physicalMemSize;
-        
-        // Realiza una copia de la lista de procesos
-        for (int i = 0; i < processes.size(); i++){
-            Process process = processes.get(i);
-            this.processes.add(process.clone());
-        }
-        
-        // Realiza una copia de la memoria física
-        for (int i = 0; i < physicalMem.length; i++){
-           Page page = physicalMem[i];
-           if (page == null){
-               this.physicalMem[i] = null;
-           } else {
-               this.physicalMem[i] = page.clone();
-           }
-        }
-        
-        // Realiza una copia de la memoria virtual
-        this.virtualMem = new ArrayList();
-        for (Page page : virtualMem){
-            this.virtualMem.add(page.clone());
-        }
-        
+        this.virtualMem = virtualMem;
+
         // Obtiene las páginas de la memoria física y las
         // agrega a la lista de todas las páginas
         // Además, actualiza la cantidad de páginas cargadas,
