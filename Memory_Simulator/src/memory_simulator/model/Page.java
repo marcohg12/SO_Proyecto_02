@@ -6,7 +6,7 @@ public class Page {
     
     private int pageId;
     private int physicalAddress; 
-    private boolean inPhysicalMemory; //LOADED
+    private boolean inPhysicalMemory; 
     private Instant timestamp;
     private Instant lastUsage;
     private boolean secondChance;

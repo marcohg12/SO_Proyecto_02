@@ -274,7 +274,6 @@ public class PrincipalWindow extends javax.swing.JFrame {
         // No genera el instruction set a menos de que tenga una semilla válida
         if(errorFound == false){
             instructions =  InstructionSetGenerator.getInstructionSet(seed, processes, operations);
-            for (String i : instructions){System.out.println(i);}
             JOptionPane.showMessageDialog(null, "Se ha generado el archivo", "", JOptionPane.INFORMATION_MESSAGE);
             InstructionSetGenerator.writeInstructionsToFile(instructions); 
         }
@@ -301,10 +300,18 @@ public class PrincipalWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonLoadActionPerformed
 
     private void generateSimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSimulationActionPerformed
-        selectAlgorithm();
-        SimulationWindow window = new SimulationWindow(algorithm, instructions, seed);
-        window.setVisible(true);
-        this.setVisible(false);
+        if(instructions == null){
+            JOptionPane.showMessageDialog(null, "No se cargo o generó un archivo", "Error", JOptionPane.ERROR_MESSAGE);
+        }else if("".equals(textRandomSeed.getText())){
+            JOptionPane.showMessageDialog(null, "Debe ingresar una semilla válida (número entero)", "Error", JOptionPane.ERROR_MESSAGE);
+        }else if(instructions != null & !"".equals(textRandomSeed.getText())){
+        
+            selectAlgorithm();
+            SimulationWindow window = new SimulationWindow(algorithm, instructions, seed);
+            window.setVisible(true);
+            this.setVisible(false);
+        }
+        
     }//GEN-LAST:event_generateSimulationActionPerformed
 
     /**
