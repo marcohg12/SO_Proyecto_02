@@ -16,24 +16,24 @@ public class Memory_Simulator {
     public static void main(String[] args) {
         
         ArrayList<String> instructions = new ArrayList();
-        instructions.add("new(1,250)");
-        instructions.add("new(1,50)");
-        instructions.add("new(2,5320)");
+        instructions.add("new(1,4)");
+        instructions.add("new(1,8)");
+        instructions.add("new(2,12)");
+        instructions.add("new(3,1345)");
         instructions.add("use(1)");
         instructions.add("use(3)");
         instructions.add("use(2)");
-        instructions.add("use(1)");
+        instructions.add("use(4)");
         instructions.add("delete(1)");
         instructions.add("kill(1)");
         instructions.add("kill(2)");
         instructions.add("kill(3)");
-        Simulation simulation = new Simulation(PaginationAlgoType.SC_ALGO, instructions, 1);
-        int i = 0;
+        Simulation simulation = new Simulation(PaginationAlgoType.OPT_ALGO, instructions, 1);
+
         while (simulation.executeNext()){
             ComputerState state = simulation.getState();
-            //System.out.println(state.getUsedMemoryPerc());
-            i += 1;
-            System.out.println(state.getPhysicalMem().toString());
+             // System.out.println(state.getVirtualMem().size());
+            //System.out.println(state.getPhysicalMem());
         }
         /*
         int seed = 2;

@@ -117,8 +117,7 @@ public class Page {
      
     @Override
     public int hashCode() {
-        int hash = 7;
-        return hash;
+        return Integer.hashCode(pageId);
     }
 
     @Override
@@ -135,13 +134,4 @@ public class Page {
         final Page other = (Page) obj;
         return this.pageId == other.pageId;
     }
-    
-    @Override
-    public Page clone(){
-        Page page = new Page(this.pageId, this.physicalAddress, this.inPhysicalMemory, this.spaceUsed, this.processId);
-        page.setTimestamp(this.getTimestamp());
-        page.setLastUsage(this.getLastUsage());
-        page.setSecondChance(this.getSecondChance());
-        return page;
-    }   
 }

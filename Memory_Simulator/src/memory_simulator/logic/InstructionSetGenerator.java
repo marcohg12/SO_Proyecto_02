@@ -73,11 +73,11 @@ public class InstructionSetGenerator {
                 continue;
             }
             
-            int option = random.nextInt(3);
+            double option = random.nextDouble();
             
-            if (option == 1){
+            if (option <= 0.2){
                 // Genera una instrucción NEW para el proceso
-                int size = random.nextInt(1, 6001);
+                int size = random.nextInt(1, 401);
                 String instruction = "new(" + Integer.toString(pId) + "," + Integer.toString(size) + ")";
                 instructions.add(instruction);
                 
@@ -86,7 +86,7 @@ public class InstructionSetGenerator {
                 
                 instructionsPerProcess.replace(pId, remainingInstructions - 1);
             }
-            else if (option == 2 && !processPointers.get(pId).isEmpty()){
+            else if (option <= 0.6 && !processPointers.get(pId).isEmpty()){
                 // Genera una instrucción USE para el proceso
                 ArrayList<Integer> pointers = processPointers.get(pId);
                 int index = random.nextInt(pointers.size());
@@ -97,7 +97,7 @@ public class InstructionSetGenerator {
                 
                 instructionsPerProcess.replace(pId, remainingInstructions - 1);
             }
-            else if (option == 3 && !processPointers.get(pId).isEmpty()) {
+            else if (option <= 1.0 && !processPointers.get(pId).isEmpty()) {
                 // Genera una instrucción DELETE para el proceso
                 ArrayList<Integer> pointers = processPointers.get(pId);
                 int index = random.nextInt(pointers.size());
@@ -106,7 +106,7 @@ public class InstructionSetGenerator {
                 String instruction = "delete(" + Integer.toString(pointer) + ")";
                 instructions.add(instruction);
                 
-                processPointers.get(pId).remove(pointer);
+                processPointers.get(pId).remove(index);
                 
                 instructionsPerProcess.replace(pId, remainingInstructions - 1);
             }

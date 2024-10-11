@@ -2,11 +2,12 @@ package memory_simulator.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 public class ComputerState {
     
     private Page[] physicalMem; // Indice para la RAM
-    private ArrayList<Page> virtualMem;
+    private LinkedList<Page> virtualMem;
     private ArrayList<Page> allPages;
     private int clock;
     private int thrashing;
@@ -22,7 +23,7 @@ public class ComputerState {
     private double thrashingPerc;
     private int physicalMemSize;
     
-    public ComputerState(Page[] physicalMem, ArrayList<Page> virtualMem, 
+    public ComputerState(Page[] physicalMem, LinkedList<Page> virtualMem, 
                          int clock, int thrashing, ArrayList<Process> processes, int physicalMemSize){
         
         this.physicalMem = physicalMem;
@@ -82,14 +83,18 @@ public class ComputerState {
         usedVMemoryPerc = (usedVMemory * 100) / this.physicalMemSize;
         
         // Calculamos el porcentaje de thrashing
-        thrashingPerc = (this.thrashing * 100) / this.clock;
+        if (this.clock == 0){
+            thrashingPerc = 0;
+        } else {
+            thrashingPerc = (this.thrashing * 100) / this.clock;
+        }
     }
 
     public Page[] getPhysicalMem() {
         return physicalMem;
     }
 
-    public ArrayList<Page> getVirtualMem() {
+    public LinkedList<Page> getVirtualMem() {
         return virtualMem;
     }
 

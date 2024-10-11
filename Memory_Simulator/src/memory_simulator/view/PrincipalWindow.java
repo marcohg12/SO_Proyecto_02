@@ -274,6 +274,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         // No genera el instruction set a menos de que tenga una semilla válida
         if(errorFound == false){
             instructions =  InstructionSetGenerator.getInstructionSet(seed, processes, operations);
+            for (String i : instructions){System.out.println(i);}
             JOptionPane.showMessageDialog(null, "Se ha generado el archivo", "", JOptionPane.INFORMATION_MESSAGE);
             InstructionSetGenerator.writeInstructionsToFile(instructions); 
         }

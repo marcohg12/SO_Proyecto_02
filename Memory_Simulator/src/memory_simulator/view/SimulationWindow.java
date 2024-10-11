@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -25,10 +27,6 @@ import static memory_simulator.model.PaginationAlgoType.OPT_ALGO;
 import static memory_simulator.model.PaginationAlgoType.RND_ALGO;
 import static memory_simulator.model.PaginationAlgoType.SC_ALGO;
 
-/**
- *
- * @author paubo
- */
 public final class SimulationWindow extends javax.swing.JFrame {
 
     Simulation simulationALGO;
@@ -43,11 +41,11 @@ public final class SimulationWindow extends javax.swing.JFrame {
         
         // Se inician las simulaciones
         simulationALGO = new Simulation(algoType, instructions, seed);
-        simulationOPT = new Simulation(SC_ALGO, instructions, seed);
+        simulationOPT = new Simulation(OPT_ALGO, instructions, seed);
         algorithm = algoType;
         
         // Generar listas de colores para cada algoritmo 
-        colors = new ArrayList<>();;
+        colors = new ArrayList<>();
         colorGenerator(colors);
         
         // Creación de las barras que simulan la ram
@@ -75,65 +73,50 @@ public final class SimulationWindow extends javax.swing.JFrame {
     }
     
     public final void startSimulation() {
-        // Primer SwingWorker para la simulación con algoType (simulationALGO)
-        SwingWorker<Void, ComputerState> workerALGO = new SwingWorker<Void, ComputerState>() {
+
+        SwingWorker<Void, ArrayList<ComputerState>> worker = new SwingWorker<>() {
 
             @Override
             protected Void doInBackground() throws Exception {
-                // Ejecutar la simulación ALGO en segundo plano
-                while (simulationALGO.executeNext()) {
-                    ComputerState state = simulationALGO.getState();
-                    publish(state);  
-                    Thread.sleep(10);  // Pausa para simular tiempo de procesamiento
+
+                boolean isALGOFinished = false;
+                boolean isOPTFinished = false;
+                
+                while (!isALGOFinished && !isOPTFinished){             
+                    isALGOFinished = !simulationALGO.executeNext();
+                    isOPTFinished = !simulationOPT.executeNext();
+                    ArrayList<ComputerState> states = new ArrayList();
+                    states.add(simulationOPT.getState());
+                    states.add(simulationALGO.getState());
+                    publish(states);
                 }
+                
                 return null; 
             }
 
             @Override
-            protected void process(java.util.List<ComputerState> states) {
+            protected void process(java.util.List<ArrayList<ComputerState>> states) {
                 if (!states.isEmpty()) {
-                    ComputerState latestState = states.get(states.size() - 1);
-                    updateALGO(latestState);  // Actualizar la simulación ALGO
+                    ArrayList<ComputerState> latestStates = states.get(states.size() - 1);
+                    updateOPT(latestStates.get(0));
+                    updateALGO(latestStates.get(1));
                 }
             }
 
             @Override
             protected void done() {
-                System.out.println("Simulación ALGO finalizada");
+                try {
+                    get();
+                } catch (Exception e){
+                    System.out.println(e);
+                    Throwable cause = e.getCause();
+                    cause.printStackTrace();
+                }
+                System.out.println("Simulaciones finalizadas");
             }
         };
 
-        // Segundo SwingWorker para la simulación con OPT_ALGO (simulationOPT)
-        SwingWorker<Void, ComputerState> workerOPT = new SwingWorker<Void, ComputerState>() {
-
-            @Override
-            protected Void doInBackground() throws Exception {
-                // Ejecutar la simulación OPT en segundo plano
-                while (simulationOPT.executeNext()) {
-                    ComputerState state = simulationOPT.getState();
-                    publish(state);  
-                    Thread.sleep(10);  
-                }
-                return null; 
-            }
-
-            @Override
-            protected void process(java.util.List<ComputerState> states) {
-                if (!states.isEmpty()) {
-                    ComputerState latestState = states.get(states.size() - 1);
-                    updateOPT(latestState);  // Actualizar la simulación OPT
-                }
-            }
-
-            @Override
-            protected void done() {
-                System.out.println("Simulación OPT finalizada");
-            }
-        };
-
-        // Ejecutar ambos SwingWorkers en paralelo
-        workerALGO.execute();
-        workerOPT.execute();
+        worker.execute();
     }
 
     public void updateOPT(ComputerState state){
@@ -271,11 +254,7 @@ public final class SimulationWindow extends javax.swing.JFrame {
             panel.repaint();
         }
     }
-
-
     
-
-
     public void colorGenerator(ArrayList<Color> colors) {
         List<Float> hueValues = new ArrayList<>();
         for (int i = 0; i < 100; i++) {

@@ -1,69 +1,31 @@
 package memory_simulator.logic;
 
-import java.time.Instant;
-import memory_simulator.model.MMU;
 import memory_simulator.model.Page;
 
 public class FIFO implements PaginationAlgorithm {
     
     public FIFO(){}
-   
-    private Page getOldestPage(MMU mmu){
-        
-        Page oldest = null;
-        Page[] physicalMem = mmu.getPhysicalMem();
-        
-        for (int i = 0; i < mmu.getMaxPagesInPhysicalMem(); i++){
-            Page page = physicalMem[i];
-            if (oldest == null && page != null){
-                oldest = page;
-            }
-            else if (page != null && page.getTimestamp().isBefore(oldest.getTimestamp())){
-                oldest = page;
-            }
-        }
-        
-        return oldest;
-    }
-
+    
     @Override
-    public void usePage(MMU mmu, Page page) {
+    public Page getPageToRemove(Page[] physicalMem){
         
-        // Primero buscamos si la página está en memoria física
-        Page[] physicalMem = mmu.getPhysicalMem();
+        Page oldestPage = null;
         
-        for (int i = 0; i < mmu.getMaxPagesInPhysicalMem(); i++){
+        for (Page page : physicalMem) {
             
-            // Si la página se encuentra en memoria principal lo
-            // tomamos como un hit
-            //physicalMem[i].getPageId() == page.getPageId()
-            if (physicalMem[i].getPageId() == page.getPageId()){
-                mmu.incrementClock(1);
-                return;
+            if (page == null){
+                continue;
+            }
+            
+            if (oldestPage == null){
+                oldestPage = page;
+            }
+            
+            if (page.getTimestamp().isBefore(oldestPage.getTimestamp())){
+                oldestPage = page;
             }
         }
         
-        // Si no, la página está en memoria virtual
-        // y lo tomamos como un fault
-        mmu.incrementClock(5);
-        mmu.incrementThrashing(5);
-        
-        // Actualizamos el timestamp de la página al
-        // momento en que se cargó de memoria virtual
-        page.setTimestamp(Instant.now());
-        
-        // Verificamos si hay espacio vacío en la memoria
-        int emptyAddress = mmu.getEmptyAddress();
-        
-        if (emptyAddress == -1){
-            // Si no hay espacio, intercambiamos con la página más vieja
-            // (equivalente a la primera en la cola)
-            Page out = getOldestPage(mmu);
-            mmu.swapPages(page, out);
-        } else {
-            // Si hay un espacio vacío entonces insertamos la página en
-            // esa dirección
-            mmu.insertPageInAddress(page, emptyAddress);
-        }
-    } 
+        return oldestPage;
+    }    
 }

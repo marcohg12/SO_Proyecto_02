@@ -43,25 +43,24 @@ public class Simulation {
     
     public boolean executeNext(){
         
-        while (index < instructions.size()){
-            
-            Instruction instruction = new Instruction(instructions.get(index));
-            
-            if (instruction.getType() == InstructionType.NEW){
-                computer.executeNew(instruction.getParameter1(), instruction.getParameter2());
-            } else if (instruction.getType() == InstructionType.DELETE){
-                computer.executeDelete(instruction.getParameter1());
-            } else if (instruction.getType() == InstructionType.KILL){
-                computer.executeKill(instruction.getParameter1());
-            } else if (instruction.getType() == InstructionType.USE){
-                computer.executeUse(instruction.getParameter1());
-            }
-            
-            index += 1;
-            
-            return true;
+        if (index >= instructions.size()){
+            return false;
         }
         
-        return false;
+        Instruction instruction = new Instruction(instructions.get(index));
+        
+        if (instruction.getType() == InstructionType.NEW){
+            computer.executeNew(instruction.getParameter1(), instruction.getParameter2());
+        } else if (instruction.getType() == InstructionType.DELETE){
+            computer.executeDelete(instruction.getParameter1());
+        } else if (instruction.getType() == InstructionType.KILL){
+            computer.executeKill(instruction.getParameter1());
+        } else if (instruction.getType() == InstructionType.USE){
+            computer.executeUse(instruction.getParameter1());
+        }
+        
+        index += 1;
+        
+        return true;
     }
 }

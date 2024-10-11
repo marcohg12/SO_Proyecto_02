@@ -42,11 +42,19 @@ public class Computer {
         
         // Guardamos el puntero en la lista de punteros del proceso
         process.insertPointer(pointer);
-        System.out.println("Created new process with ID: " + pId + ", Pointer: " + pointer);
     }
     
     public void executeDelete(int pointer){
+        
         mmu.releasePointer(pointer);
+        
+        // Eliminamos el puntero del proceso correspondiente
+        for (Process p : processes){
+            if (p.getPointers().contains(pointer)){
+                p.getPointers().remove(Integer.valueOf(pointer));
+                break;
+            }
+        }
     }
     
     public void executeUse(int pointer){
@@ -54,7 +62,7 @@ public class Computer {
     }
     
     public void executeKill(int pId){
-        
+      
         // Obtenemos el objeto del proceso
         Process process = null;
         for (Process p : processes){

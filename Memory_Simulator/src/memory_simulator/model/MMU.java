@@ -3,128 +3,147 @@ package memory_simulator.model;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import memory_simulator.logic.FIFO;
 import memory_simulator.logic.OPT;
 import memory_simulator.logic.PaginationAlgorithm;
 
 public class MMU {
     
     private int physicalMemSize;
-    private int maxPagesInPhysicalMem;
     private Page[] physicalMem;
-    private ArrayList<Page> virtualMem;
+    private LinkedList<Page> virtualMem;
     private HashMap<Integer, ArrayList<Page>> memMap;
     private int pageSize;
     private int pageCount;
-    private int vPageCount;
     private int pointerCount;
     private int clock;
     private int thrashing;
     private PaginationAlgorithm paginationAlgorithm;
     
     public MMU(PaginationAlgorithm paginationAlgorithm){
+        
         physicalMemSize = 400;
         pageSize = 4;
         pageCount = 0;
         pointerCount = 1;
-        vPageCount = 0;
         clock = 0;
         thrashing = 0;
-        maxPagesInPhysicalMem = physicalMemSize / pageSize;
-        physicalMem = new Page[maxPagesInPhysicalMem];
-        virtualMem = new ArrayList();
+        physicalMem = new Page[physicalMemSize / pageSize];
+        virtualMem = new LinkedList();
         memMap = new HashMap();
         this.paginationAlgorithm = paginationAlgorithm;
         
         // Iniciamos toda la memoria física en null (espacios libres)
-        for (int i = 0; i < maxPagesInPhysicalMem; i++){
+        for (int i = 0; i < physicalMem.length; i++){
             physicalMem[i] = null;
         }
     }
     
-    private Page insertPage(int processId, int spaceUsed){
-        
-        // Verifica si puede insertar la página en memoria física
-        for (int i = 0; i < maxPagesInPhysicalMem; i++){
-            
-            // Si encontramos un espacio libre, insertarmos la página
+    private int getEmptyAddress(){
+        for (int i = 0; i < physicalMem.length; i++){
             if (physicalMem[i] == null){
-                
-                Page page = new Page(pageCount, i, true, spaceUsed, processId);
-                page.setTimestamp(Instant.now());
-                page.setLastUsage(Instant.now());
-                physicalMem[i] = page;
-                pageCount += 1;
-                clock += 1;
-                
-                return page;
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    private Page removePageFromVirtualMem(int pageId){
+        
+        for (int i = 0; i < virtualMem.size(); i++){
+            
+            if (virtualMem.get(i).getPageId() == pageId){
+                return virtualMem.remove(i);
             }
         }
         
-        // Si no se pudo insertar en memoria física, entonces se inserta
-        // en memoria virtual
-        Page page = new Page(pageCount, -1, false, spaceUsed, processId);
-        page.setVirtualAddress(vPageCount);
-        pageCount += 1;
-        vPageCount += 1;
-        clock += 5;
-        virtualMem.add(page);
-        
-        return page;
+        return null;
     }
     
-    /**
-     * Crea las páginas necesarias para un proceso
-     * @param processId El ID del proceso que solicita la memoria
-     * @param size El tamaño en KB del proceso
-     * @return Un puntero al mapa de memoria. El puntero es la llave del mapa para
-     * la lista de páginas creadas para el proceso
-     */
-    public int createPagesForProcess(int processId, int size){
+    public int createPagesForProcess(int pId, int size){
         
-        int pointer = pointerCount;
-        
-        // Calculamos la cantidad de páginas necesarias para el proceso
-        int pagesRequired = size / pageSize;
-        if (size % 4 != 0){
-            pagesRequired += 1;
-        }
-        
-        ArrayList<Page> createdPages = new ArrayList();
-        
-        // Insertamos las páginas
-        for (int i = 0; i < pagesRequired - 1; i++){
-            Page page = insertPage(processId, 4);
-            page.setPointer(pointer);
-            createdPages.add(page); 
-        }
-        Page page = insertPage(processId, size % 4);
-        page.setPointer(pointer);
-        createdPages.add(page); 
-        
-        // Creamos el puntero e insertamos las páginas creadas asociadas 
-        // al puntero en el mapa de memoria
-        memMap.put(pointer, createdPages);
+        int processPointer = pointerCount;
         pointerCount += 1;
-        return pointer;     
+        ArrayList<Page> pointerPages = new ArrayList();
+        
+        // Calculamos cuantas páginas se necesitan para el proceso
+        int pagesToCreate = size / 4;
+        if (size % 4 != 0){
+            pagesToCreate += 1;
+        }
+        
+        // Insertamos las páginas en memoria
+        for (int i = 0; i < pagesToCreate; i++){
+            
+            // Removemos el uso de la página para el algoritmo óptimo
+            if (paginationAlgorithm instanceof OPT){
+                ((OPT)paginationAlgorithm).removeUsage();
+            }
+            
+            int spaceUsed = 4;
+            
+            if (i == pagesToCreate - 1){
+                spaceUsed = size % 4;
+            }
+            
+            int emptyAddress = getEmptyAddress();
+            Page page;
+            
+            if (emptyAddress != -1){
+                
+                // Si tenemos un espacio libre en memoria, entonces
+                // insertamos la página en esa dirección
+                page = new Page(pageCount, emptyAddress, true, spaceUsed, pId);
+                page.setTimestamp(Instant.now());
+                page.setLastUsage(Instant.now());
+                page.setSecondChance(true);
+                physicalMem[emptyAddress] = page;
+                
+                // Actualizamos los tiempos
+                clock += 1;
+            } 
+            else {
+                
+                // Si no, escogemos una página de memoria física
+                // para intercambiar
+                Page pageToRemove = paginationAlgorithm.getPageToRemove(physicalMem);
+                page = new Page(pageCount, pageToRemove.getPhysicalAddress(), true, spaceUsed, pId);
+                page.setTimestamp(Instant.now());
+                page.setLastUsage(Instant.now());
+                page.setSecondChance(true);
+                
+                // Intercambiamos las páginas
+                pageToRemove.setInPhysicalMemory(false);
+                pageToRemove.setPhysicalAddress(-1);
+                virtualMem.add(pageToRemove);
+                physicalMem[page.getPhysicalAddress()] = page;
+                
+                // Actualizamos los tiempos
+                clock += 5;
+                thrashing += 5;
+            }
+            
+            // Agregamos la página a las páginas asociadas al puntero
+            pointerPages.add(page);
+            
+            // Actualizamos los contadores
+            pageCount += 1;
+        }
+        
+        memMap.put(processPointer, pointerPages);
+        return processPointer;
     }
     
-    /**
-     * Elimina las páginas asociadas a un puntero tanto de memoria física
-     * como virtual. Si el puntero no tiene páginas asociadas, la
-     * operación no tiene efecto
-     * @param pointer El puntero asociado a las páginas a eliminar
-     */
     public void releasePointer(int pointer){
         
-        ArrayList<Page> pages = memMap.get(pointer);
+        // Obtenemos las páginas asociadas al puntero
+        ArrayList<Page> pagesToRemove = memMap.get(pointer);
         
-        if (pages == null){
-            return;
-        }
-        
-        // Borramos las páginas asociadas al puntero de memoria
-        for (Page page : pages){
+        for (Page page : pagesToRemove){
             
+            // Eliminamos la página de memoria real o virtual
+            // como corresponda
             if (page.isInPhysicalMemory()){
                 physicalMem[page.getPhysicalAddress()] = null;
             } else {
@@ -136,26 +155,66 @@ public class MMU {
         memMap.remove(pointer);
     }
     
-    /**
-     * Usa las páginas asociadas a un puntero. Esta operación utiliza
-     * el algoritmo de reemplazo definido en caso de que sea necesario
-     * traer páginas de memoria virtual y no haya espacio disponible
-     * @param pointer El puntero asociado a las páginas a usar
-     */
     public void usePointer(int pointer){
         
-        ArrayList<Page> pages = memMap.get(pointer);
+        // Obtenemos las páginas asociadas al puntero
+        ArrayList<Page> pagesToUse = memMap.get(pointer);
         
-        if (pages == null){
-            return;
-        }
-        
-        for (Page page : pages){
-            paginationAlgorithm.usePage(this, page);
-        }
-        
-        if (paginationAlgorithm instanceof OPT){
-            ((OPT)paginationAlgorithm).removeUsage();
+        for (Page page : pagesToUse){
+            
+            // Removemos el uso de la página para el algoritmo óptimo
+            if (paginationAlgorithm instanceof OPT){
+                ((OPT)paginationAlgorithm).removeUsage();
+            }
+            
+            if (page.isInPhysicalMemory()){
+                
+                // Hit de página
+                page.setLastUsage(Instant.now());
+                page.setSecondChance(true);
+                clock += 1;
+            } else {
+                
+                // Fallo de página
+                clock += 5;
+                thrashing += 5;
+                
+                int emptyAddress = getEmptyAddress();
+                Page pageToLoad;
+                
+                if (emptyAddress != -1){
+                    
+                    // Si hay un espacio libre para la página, entonces
+                    // la insertamos en ese lugar
+                    pageToLoad = removePageFromVirtualMem(page.getPageId());
+                    pageToLoad.setTimestamp(Instant.now());
+                    pageToLoad.setLastUsage(Instant.now());
+                    pageToLoad.setSecondChance(true);
+                    pageToLoad.setInPhysicalMemory(true);
+                    pageToLoad.setPhysicalAddress(emptyAddress);
+                    physicalMem[emptyAddress] = pageToLoad;
+                } else {
+                    
+                    // Si no hay espacio, entonces obtenemos la página
+                    // para intercambiar
+                    Page pageToRemove = paginationAlgorithm.getPageToRemove(physicalMem);
+                    int addressToInsert = pageToRemove.getPhysicalAddress();
+                    
+                    // Enviamos la página a remover a memoria virtual
+                    pageToRemove.setInPhysicalMemory(false);
+                    pageToRemove.setPhysicalAddress(-1);
+                    virtualMem.add(pageToRemove);
+                    
+                    // Cargamos la página necesitada en memoria real
+                    pageToLoad = removePageFromVirtualMem(page.getPageId());
+                    pageToLoad.setTimestamp(Instant.now());
+                    pageToLoad.setLastUsage(Instant.now());
+                    pageToLoad.setSecondChance(true);
+                    pageToLoad.setInPhysicalMemory(true);
+                    pageToLoad.setPhysicalAddress(addressToInsert);
+                    physicalMem[addressToInsert] = pageToLoad;
+                }
+            }
         }
     }
 
@@ -163,15 +222,11 @@ public class MMU {
         return physicalMemSize;
     }
 
-    public int getMaxPagesInPhysicalMem() {
-        return maxPagesInPhysicalMem;
-    }
-
     public Page[] getPhysicalMem() {
         return physicalMem;
     }
 
-    public ArrayList<Page> getVirtualMem() {
+    public LinkedList<Page> getVirtualMem() {
         return virtualMem;
     }
 
@@ -199,41 +254,7 @@ public class MMU {
         return thrashing;
     }
 
-    public void setThrashing(int thrashing) {
-        this.thrashing = thrashing;
-    }
-    
-    public void incrementClock(int increment){
-        clock += increment;
-    }
-    
-    public void incrementThrashing(int increment){
-        thrashing += increment;
-    }
-    
-    public void swapPages(Page in, Page out){
-        physicalMem[out.getPhysicalAddress()] = in;
-        virtualMem.remove(in);
-        virtualMem.add(out);
-        in.setInPhysicalMemory(true);
-        out.setInPhysicalMemory(false);
-        in.setPhysicalAddress(out.getPhysicalAddress());
-        out.setVirtualAddress(in.getVirtualAddress());
-    }
-    
-    public int getEmptyAddress(){
-
-        for (int i = 0; i < maxPagesInPhysicalMem; i++){
-            if (physicalMem[i] == null){
-                return i;
-            }
-        }
-        return -1;
-    }
-    
-    public void insertPageInAddress(Page page, int address){
-        page.setInPhysicalMemory(true);
-        page.setPhysicalAddress(address);
-        physicalMem[address] = page;  
+    public PaginationAlgorithm getPaginationAlgorithm() {
+        return paginationAlgorithm;
     }
 }

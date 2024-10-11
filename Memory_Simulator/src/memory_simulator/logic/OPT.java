@@ -10,120 +10,87 @@ import memory_simulator.model.Page;
 
 public class OPT implements PaginationAlgorithm {
     
-    ArrayList<Integer> pointerUsages;
+    private ArrayList<Integer> pageUsages;
     
     public OPT(ArrayList<String> instructions){
-        pointerUsages = new ArrayList();
+        
+        HashMap<Integer, ArrayList<Integer>> memMap = new HashMap();
+        pageUsages = new ArrayList();
+        int pageCount = 0;
+        int pointerCount = 1;
         
         for (String instructionString : instructions){
+            
             Instruction instruction = new Instruction(instructionString);
-            if (instruction.getType() == InstructionType.USE){
-                pointerUsages.add(instruction.getParameter1());
+            
+            if (instruction.getType() == InstructionType.NEW){
+                
+                ArrayList<Integer> pagesIds = new ArrayList();
+                
+                // Calculamos las páginas que crea el new
+                int size = instruction.getParameter2();
+                int pagesToCreate = size / 4;
+                if (size % 4 != 0){
+                    pagesToCreate += 1;
+                }
+                
+                // Creamos las páginas
+                for (int i = 0; i < pagesToCreate; i++){
+                    pagesIds.add(pageCount);
+                    pageUsages.add(pageCount);
+                    pageCount += 1;
+                }
+                
+                // Registramos el puntero con las respectivas páginas
+                memMap.put(pointerCount, pagesIds);
+                pointerCount += 1;
+            }
+            else if (instruction.getType() == InstructionType.USE){
+                
+                ArrayList<Integer> pagesIdsToBeUsed = memMap.get(instruction.getParameter1());
+                
+                for (int i = 0; i < pagesIdsToBeUsed.size(); i++){
+                    pageUsages.add(pagesIdsToBeUsed.get(i));
+                }
             }
         }
     }
     
     public void removeUsage(){
-        pointerUsages.removeFirst();
+        pageUsages.removeFirst();
     }
-    
-    private ArrayList<Integer> getPageUsages(MMU mmu){
+
+    @Override
+    public Page getPageToRemove(Page[] physicalMem) {
         
-        HashMap<Integer, ArrayList<Page>> memMap = mmu.getMemMap();
-        ArrayList<Integer> pageUsages = new ArrayList();
-        
-        for (Integer pointer : pointerUsages){
-            ArrayList<Page> pages = memMap.get(pointer);
-            for (Page page : pages){
-                pageUsages.add(page.getPageId());
-            }
-        }
-        
-        return pageUsages;
-    }
-    
-    private int getPageIdWithLatestUsage(MMU mmu){
-        
-        Page[] physicalMem = mmu.getPhysicalMem();
-        ArrayList<Integer> pagesInMemIds = new ArrayList();
-        ArrayList<Integer> pageUsages = getPageUsages(mmu);
+        int latestIndex = -1;
+        Page latestPage = null;
         
         for (Page page : physicalMem){
-            if (page != null){
-                pagesInMemIds.add(page.getPageId());
+            
+            if (page == null){
+                continue;
             }
-        }
-        
-        // Si no, buscamos la que se usa más lejos en el futuro
-        int farthest = -1;
-        int farthestPageId = -1;
-        
-        for (int i = 0; i < pagesInMemIds.size(); i++){
             
             int j;
             for (j = 0; j < pageUsages.size(); j++){
-                if (pagesInMemIds.get(i) == pageUsages.get(i)){
-                    if (j > farthest){
-                        farthest = j;
-                        farthestPageId = pagesInMemIds.get(i);
+                
+                if (page.getPageId() == pageUsages.get(j)){
+                    
+                    if (j > latestIndex){
+                        latestIndex = j;
+                        latestPage = page;
                     }
                     break;
                 }
             }
             
-            // Si la página en memoria nunca se encontró en usos futuros
-            // entonces se escoge como reemplazo
             if (j == pageUsages.size()){
-                farthestPageId = pagesInMemIds.get(i);
+                latestPage = page;
                 break;
             }
         }
         
-        return farthestPageId;    
-    }
-    
-    @Override
-    public void usePage(MMU mmu, Page page){
-
-        // Primero buscamos si la página está en memoria física
-        Page[] physicalMem = mmu.getPhysicalMem();
-        
-        for (int i = 0; i < mmu.getMaxPagesInPhysicalMem(); i++){
-            
-            // Si la página se encuentra en memoria principal lo
-            // tomamos como un hit
-            if (physicalMem[i].getPageId() == page.getPageId()){
-                physicalMem[i].setLastUsage(Instant.now());
-                mmu.incrementClock(1);
-                return;
-            }
-        }
-        
-        // Si no, la página está en memoria virtual
-        // y lo tomamos como un fault
-        mmu.incrementClock(5);
-        mmu.incrementThrashing(5);
-        
-        // Verificamos si hay espacio vacío en la memoria
-        int emptyAddress = mmu.getEmptyAddress();
-        
-        if (emptyAddress == -1){
-            // Si no hay espacio, intercambiamos con la página que será
-            // usada más tarde en el futuro
-            int pageOutId = getPageIdWithLatestUsage(mmu);
-            
-            for (Page pageInMem : physicalMem){
-                if (pageInMem != null && pageInMem.getPageId() == pageOutId){
-                    mmu.swapPages(page, pageInMem);
-                    return;
-                }
-            }
-            
-        } else {
-            // Si hay un espacio vacío entonces insertamos la página en
-            // esa dirección
-            mmu.insertPageInAddress(page, emptyAddress);
-        }    
-    }
-    
+        return latestPage;
+    }   
 }

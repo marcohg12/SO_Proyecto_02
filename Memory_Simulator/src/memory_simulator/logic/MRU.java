@@ -1,68 +1,33 @@
 package memory_simulator.logic;
 
-import java.time.Instant;
 import memory_simulator.model.MMU;
 import memory_simulator.model.Page;
 
 public class MRU implements PaginationAlgorithm {
     
     public MRU(){}
-   
-    private Page getMostRecentlyUsed(MMU mmu){
-        
-        Page mostRecentlyUsed = null;
-        Page[] physicalMem = mmu.getPhysicalMem();
-        
-        for (int i = 0; i < mmu.getMaxPagesInPhysicalMem(); i++){
-            Page page = physicalMem[i];
-            if (mostRecentlyUsed == null && page != null){
-                mostRecentlyUsed = page;
-            }
-            else if (page != null && page.getLastUsage().isAfter(mostRecentlyUsed.getLastUsage())){
-                mostRecentlyUsed = page;
-            }
-        }
-        
-        return mostRecentlyUsed;
-    }
-
+    
     @Override
-    public void usePage(MMU mmu, Page page) {
+    public Page getPageToRemove(Page[] physicalMem) {
         
-        // Primero buscamos si la página está en memoria física
-        Page[] physicalMem = mmu.getPhysicalMem();
+        Page mostRecentlyUsedPage = null;
         
-        for (int i = 0; i < mmu.getMaxPagesInPhysicalMem(); i++){
+        for (Page page : physicalMem){
             
-            // Si la página se encuentra en memoria principal lo
-            // tomamos como un hit
-            if (physicalMem[i].getPageId() == page.getPageId()){
-                physicalMem[i].setLastUsage(Instant.now()); // Actualizamos el timestamp de uso
-                mmu.incrementClock(1);
-                return;
+            if (page == null){
+                continue;
+            }
+            
+            if (mostRecentlyUsedPage == null){
+                mostRecentlyUsedPage = page;
+            }
+            
+            if (page.getLastUsage().isAfter(mostRecentlyUsedPage.getLastUsage())){
+                mostRecentlyUsedPage = page;
             }
         }
         
-        // Si no, la página está en memoria virtual
-        // y lo tomamos como un fault
-        mmu.incrementClock(5);
-        mmu.incrementThrashing(5);
-        
-        // Actualizamos el timestamp de uso de la página
-        page.setLastUsage(Instant.now());
-        
-        // Verificamos si hay espacio vacío en la memoria
-        int emptyAddress = mmu.getEmptyAddress();
-        
-        if (emptyAddress == -1){
-            // Si no hay espacio, intercambiamos con la página más recientemente
-            // usada
-            Page out = getMostRecentlyUsed(mmu);
-            mmu.swapPages(page, out);
-        } else {
-            // Si hay un espacio vacío entonces insertamos la página en
-            // esa dirección
-            mmu.insertPageInAddress(page, emptyAddress);
-        }
-    }   
+        return mostRecentlyUsedPage;
+    }
+      
 }
