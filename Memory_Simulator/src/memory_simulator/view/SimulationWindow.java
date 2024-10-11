@@ -47,7 +47,7 @@ public final class SimulationWindow extends javax.swing.JFrame {
         
         // Se inician las simulaciones
         simulationALGO = new Simulation(algoType, instructions, seed);
-        simulationOPT = new Simulation(MRU_ALGO, instructions, seed);
+        simulationOPT = new Simulation(OPT_ALGO, instructions, seed);
         algorithm = algoType;
         
         // Generar listas de colores para cada algoritmo 
@@ -344,14 +344,15 @@ public final class SimulationWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
-        setMaximumSize(new java.awt.Dimension(1150, 780));
-        setMinimumSize(new java.awt.Dimension(1150, 780));
-        setPreferredSize(new java.awt.Dimension(1150, 780));
+        setMaximumSize(new java.awt.Dimension(1170, 820));
+        setMinimumSize(new java.awt.Dimension(1170, 820));
+        setPreferredSize(new java.awt.Dimension(1170, 820));
+        setSize(new java.awt.Dimension(1170, 820));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
-        jPanel1.setMaximumSize(new java.awt.Dimension(1200, 820));
-        jPanel1.setMinimumSize(new java.awt.Dimension(1200, 820));
-        jPanel1.setPreferredSize(new java.awt.Dimension(1200, 820));
+        jPanel1.setMaximumSize(new java.awt.Dimension(1170, 820));
+        jPanel1.setMinimumSize(new java.awt.Dimension(1170, 820));
+        jPanel1.setPreferredSize(new java.awt.Dimension(1170, 820));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jTextField1.setEditable(false);
@@ -754,13 +755,13 @@ public final class SimulationWindow extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 820, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
