@@ -19,6 +19,9 @@ public class OPT implements PaginationAlgorithm {
         int pageCount = 0;
         int pointerCount = 1;
         
+        // Ejecuta un análisis estático de las instrucciones de la sesión
+        // para generar una lista con los usos de cada página para toda
+        // la sesión
         for (String instructionString : instructions){
             
             Instruction instruction = new Instruction(instructionString);
@@ -62,6 +65,10 @@ public class OPT implements PaginationAlgorithm {
 
     @Override
     public Page getPageToRemove(Page[] physicalMem) {
+        
+        // Obtiene la página que será usada más tarde en el futuro
+        // Si existe una página en memoria RAM que nunca se vuelve a usar,
+        // entonces escoge esa página
         
         int latestIndex = -1;
         Page latestPage = null;

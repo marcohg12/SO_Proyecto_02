@@ -1,8 +1,6 @@
 package memory_simulator.logic;
 
-import java.time.Instant;
 import java.util.Random;
-import memory_simulator.model.MMU;
 import memory_simulator.model.Page;
 
 public class RND implements PaginationAlgorithm {
@@ -14,7 +12,10 @@ public class RND implements PaginationAlgorithm {
     }
     
     @Override
-    public Page getPageToRemove(Page[] physicalMem) {      
+    public Page getPageToRemove(Page[] physicalMem) { 
+        
+        // Obtiene una página elatoria de la memoria RAM
+ 
         int randomIndex = random.nextInt(0, physicalMem.length);
         return physicalMem[randomIndex];
     }

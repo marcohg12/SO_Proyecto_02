@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import memory_simulator.logic.FIFO;
 import memory_simulator.logic.OPT;
 import memory_simulator.logic.PaginationAlgorithm;
 
@@ -40,6 +39,11 @@ public class MMU {
         }
     }
     
+    /**
+     * Obtiene el índica de un espacio libre en memoria RAM.
+     * @return El índice libre en la memoria RAM. Si no hay espacio libre, 
+     * entonces retorna -1.
+     */
     private int getEmptyAddress(){
         for (int i = 0; i < physicalMem.length; i++){
             if (physicalMem[i] == null){
@@ -49,6 +53,11 @@ public class MMU {
         return -1;
     }
     
+    /**
+     * Elimina una página de memoria virtual por el identificador de página.
+     * @param pageId El identificador de la página a eliminar.
+     * @return El objeto de la página eliminada.
+     */
     private Page removePageFromVirtualMem(int pageId){
         
         for (int i = 0; i < virtualMem.size(); i++){
@@ -61,6 +70,15 @@ public class MMU {
         return null;
     }
     
+    /**
+     * Crea y carga en memoria las páginas necesarias para cubrir el espacio
+     * solicitado por el proceso. Si no hay espacio libre para cargar todas las
+     * páginas creadas, entonces utiliza el algoritmo de reemplazo definido
+     * para escoger las páginas a enviar a memoria virtual.
+     * @param pId El identificador del proceso.
+     * @param size El espacio solicitado en KB.
+     * @return El puntero asociado a las páginas creadas.
+     */
     public int createPagesForProcess(int pId, int size){
         
         int processPointer = pointerCount;
@@ -108,6 +126,7 @@ public class MMU {
                 // Si no, escogemos una página de memoria física
                 // para intercambiar
                 Page pageToRemove = paginationAlgorithm.getPageToRemove(physicalMem);
+                
                 page = new Page(pageCount, pageToRemove.getPhysicalAddress(), true, spaceUsed, pId);
                 page.setTimestamp(Instant.now());
                 page.setLastUsage(Instant.now());
@@ -117,6 +136,8 @@ public class MMU {
                 pageToRemove.setInPhysicalMemory(false);
                 pageToRemove.setPhysicalAddress(-1);
                 virtualMem.add(pageToRemove);
+                pageToRemove.setVirtualAddress(virtualMem.size() - 1);
+                
                 physicalMem[page.getPhysicalAddress()] = page;
                 
                 // Actualizamos los tiempos
@@ -135,6 +156,11 @@ public class MMU {
         return processPointer;
     }
     
+    /**
+     * Elimina las páginas asociadas al puntero y elimina el puntero
+     * del mapa de memoria.
+     * @param pointer El puntero a liberar.
+     */
     public void releasePointer(int pointer){
         
         // Obtenemos las páginas asociadas al puntero
@@ -155,6 +181,12 @@ public class MMU {
         memMap.remove(pointer);
     }
     
+    /**
+     * Carga en memoria las páginas asociadas a un puntero. Si hay fallos de páginas,
+     * entonces utiliza el algoritmo de reemplazo definido para escoger
+     * la página con la que hacer el intercambio.
+     * @param pointer El puntero a utilizar.
+     */
     public void usePointer(int pointer){
         
         // Obtenemos las páginas asociadas al puntero
@@ -198,15 +230,16 @@ public class MMU {
                     // Si no hay espacio, entonces obtenemos la página
                     // para intercambiar
                     Page pageToRemove = paginationAlgorithm.getPageToRemove(physicalMem);
+                    pageToLoad = removePageFromVirtualMem(page.getPageId());
                     int addressToInsert = pageToRemove.getPhysicalAddress();
                     
                     // Enviamos la página a remover a memoria virtual
                     pageToRemove.setInPhysicalMemory(false);
                     pageToRemove.setPhysicalAddress(-1);
                     virtualMem.add(pageToRemove);
+                    pageToRemove.setVirtualAddress(pageToLoad.getVirtualAddress());
                     
                     // Cargamos la página necesitada en memoria real
-                    pageToLoad = removePageFromVirtualMem(page.getPageId());
                     pageToLoad.setTimestamp(Instant.now());
                     pageToLoad.setLastUsage(Instant.now());
                     pageToLoad.setSecondChance(true);

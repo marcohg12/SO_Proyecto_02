@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Process {
     
-    private int pId;
-    private ArrayList<Integer> pointers;
+    private int pId;                     // Identificador del proceso
+    private ArrayList<Integer> pointers; // Lista de punteros asociados al proceso
     
     public Process(int pId){
         this.pId = pId;
@@ -51,12 +51,5 @@ public class Process {
         }
         final Process other = (Process) obj;
         return this.pId == other.pId;
-    }
-    
-    public Process clone(){
-        Process process = new Process(this.pId);
-        ArrayList<Integer> newPointers = (ArrayList<Integer>) this.pointers.clone();
-        process.setPointers(newPointers);
-        return process;
     }
 }

@@ -41,6 +41,11 @@ public class Simulation {
         return computer.getState();
     } 
     
+    /**
+     * Ejecuta la siguiente instrucción en la lista de instrucciones.
+     * @return Retorna true si una instrucción fue ejecutada y false
+     * si ya no quedan instrucciones por ejecutar. 
+     */
     public boolean executeNext(){
         
         if (index >= instructions.size()){

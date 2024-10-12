@@ -4,17 +4,16 @@ import java.time.Instant;
 
 public class Page {
     
-    private int pageId;
-    private int physicalAddress; 
-    private boolean inPhysicalMemory; 
-    private Instant timestamp;
-    private Instant lastUsage;
-    private boolean secondChance;
-    private int spaceUsed;
-    private int processId;
-    private int virtualAddress;
-    private int pointer;
-    private int loadedTime;
+    private int pageId;               // Identificador de página
+    private int physicalAddress;      // Dirección de la página en memoria RAM
+    private boolean inPhysicalMemory; // Flag que indica si está en memoria RAM
+    private Instant timestamp;        // Marca de tiempo de cuando la página fue cargada a memoria
+    private Instant lastUsage;        // Marca de tiempo de la última vez que la página fue referenciada
+    private boolean secondChance;     // Marca de uso para el algoritmo de Second Chance
+    private int spaceUsed;            // Espacio en KB utilizado en la página
+    private int processId;            // Identificador del proceso dueño de la página
+    private int virtualAddress;       // Dirección de la página en memoria virtual
+    private int pointer;              // Puntero asociado a la página
     
     public Page(int pageId, int physicalAddress, boolean inPhysicalMemory, int spaceUsed, int processId){
         this.pageId = pageId;
@@ -105,14 +104,6 @@ public class Page {
 
     public void setPointer(int pointer) {
         this.pointer = pointer;
-    }
-
-    public int getLoadedTime() {
-        return loadedTime;
-    }
-
-    public void setLoadedTime(int loadedTime) {
-        this.loadedTime = loadedTime;
     }
      
     @Override

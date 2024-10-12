@@ -11,11 +11,11 @@ import java.util.*;
 public class InstructionSetGenerator {
     
     /**
-     * Genera una lista aleatoria de instrucciones
-     * @param seed La semilla para generar números aleatorios
-     * @param numProcesses La cantidad de procesos a generar
-     * @param numOperations La cantidad de operaciones total a generar
-     * @return Retorna una lista de strings, donde cada string es una instrucción
+     * Genera una lista aleatoria de instrucciones. 
+     * @param seed La semilla para generar números aleatorios. 
+     * @param numProcesses La cantidad de procesos a generar. 
+     * @param numOperations La cantidad de operaciones total a generar. 
+     * @return Retorna una lista de strings, donde cada string es una instrucción. 
      */
     public static ArrayList<String> getInstructionSet(int seed, int numProcesses, int numOperations){
         
@@ -25,6 +25,7 @@ public class InstructionSetGenerator {
         HashMap<Integer, Integer> instructionsPerProcess = new HashMap();
         Random random = new Random(seed);
         
+        // Inicia cada proceso con al menos dos instrucciones
         for (int i = 1; i <= numProcesses; i++) {
             instructionsPerProcess.put(i, 2);
             processPointers.put(i, new ArrayList());
@@ -37,6 +38,9 @@ public class InstructionSetGenerator {
         double mean = numOperations / numProcesses;
         double stddev = 30.0;
         
+        // Reparte las instrucciones restantes entre los procesos de forma
+        // aleatoria. Los procesos se escogen de forma aleatoria. El incremento
+        // en la cantidad de instrucciones se maneja con una distribución normal.
         while (remaining > 0){
             
             int pId = random.nextInt(1, numProcesses + 1);
@@ -60,8 +64,11 @@ public class InstructionSetGenerator {
             remaining -= increment;
         } 
         
+        // Genera los strings de instrucciones
         while (!instructionsPerProcess.isEmpty()){
             
+            // Obtiene un proceso aleatorio y la cantidad de instrucciones
+            // restantes a generar para el proceso
             List<Integer> keys = new ArrayList(instructionsPerProcess.keySet());
             int pId = keys.get(random.nextInt(keys.size()));
             int remainingInstructions = instructionsPerProcess.get(pId);
@@ -132,8 +139,11 @@ public class InstructionSetGenerator {
         return lines;
     }
     
-    
-    
+    /**
+     * Escribe una lista de instrucciones en un archivo de texto.
+     * @param instructions La lista de instrucciones a escribir en el archivo.
+     * @return La dirección absoluta del archivo.
+     */
     public static String writeInstructionsToFile(ArrayList<String> instructions) {
         String fileName = "instructions.txt"; 
         File file = new File(fileName);

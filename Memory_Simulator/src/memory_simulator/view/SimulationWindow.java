@@ -11,8 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -206,7 +204,6 @@ public final class SimulationWindow extends javax.swing.JFrame {
                 }else if(sc == false){
                     row[7] = 0;
                 }
-                System.out.println(sc); 
             }else if(algoType == MRU_ALGO){
                 row[7] = formatTime(page.getLastUsage()) + "s";
             }else if (algoType == RND_ALGO || algoType == OPT_ALGO || algoType == FIFO_ALGO){

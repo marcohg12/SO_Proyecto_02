@@ -1,6 +1,5 @@
 package memory_simulator.logic;
 
-import memory_simulator.model.MMU;
 import memory_simulator.model.Page;
 
 public class MRU implements PaginationAlgorithm {
@@ -9,6 +8,9 @@ public class MRU implements PaginationAlgorithm {
     
     @Override
     public Page getPageToRemove(Page[] physicalMem) {
+        
+        // Obtiene la página que fue usada más recientemente en memoria RAM
+        // Esto se calcula a partir de la marca de tiempo de uso
         
         Page mostRecentlyUsedPage = null;
         
@@ -28,6 +30,5 @@ public class MRU implements PaginationAlgorithm {
         }
         
         return mostRecentlyUsedPage;
-    }
-      
+    }      
 }

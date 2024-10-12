@@ -75,7 +75,7 @@ public class ComputerState {
             usedVMemory += 4;
         }
         
-        // Ordenamos la lista de todas las páginas por id
+        // Ordenamos la lista de todas las páginas por el identificador de página
         Collections.sort(allPages, (Page p1, Page p2) -> Integer.compare(p1.getPageId(), p2.getPageId()));
         
         // Calculamos el porcentaje de memoria física y virtual usadas

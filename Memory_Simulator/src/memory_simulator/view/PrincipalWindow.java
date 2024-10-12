@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -18,7 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import memory_simulator.logic.Simulation;
 import memory_simulator.logic.InstructionSetGenerator;
 import memory_simulator.model.PaginationAlgoType;
 import static memory_simulator.model.PaginationAlgoType.FIFO_ALGO;
@@ -50,7 +47,6 @@ public class PrincipalWindow extends javax.swing.JFrame {
             algorithm = RND_ALGO;
         }
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -341,10 +337,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             String filePath = selectedFile.getAbsolutePath();
-            System.out.println("Selected file path: " + filePath);
-    
             instructions = InstructionSetGenerator.readFileToArrayList(filePath);
-            System.out.println(instructions.toString());
         }else{
             JOptionPane.showMessageDialog(null, "No se seleccionó un archivo", "Error", JOptionPane.ERROR_MESSAGE);
         }

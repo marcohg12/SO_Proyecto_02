@@ -9,6 +9,10 @@ public class FIFO implements PaginationAlgorithm {
     @Override
     public Page getPageToRemove(Page[] physicalMem){
         
+        // Retorna la página más vieja en memoria RAM.
+        // La página más vieja es aquella que tenga el menor
+        // valor en la marca de tiempo
+        
         Page oldestPage = null;
         
         for (Page page : physicalMem) {

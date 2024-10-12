@@ -1,7 +1,5 @@
 package memory_simulator.logic;
 
-import java.time.Instant;
-import memory_simulator.model.MMU;
 import memory_simulator.model.Page;
 
 public class SC implements PaginationAlgorithm {
@@ -10,6 +8,10 @@ public class SC implements PaginationAlgorithm {
     
     @Override
     public Page getPageToRemove(Page[] physicalMem) {
+        
+        // Recorre la memoria actualizando el flag de Second Chance
+        // hasta encontrar la primera página con el flag en False, la cual
+        // retorna para hacer el intercambio
         
         int index = 0;
         

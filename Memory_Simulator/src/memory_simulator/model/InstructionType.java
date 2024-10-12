@@ -1,6 +1,5 @@
 package memory_simulator.model;
 
-public enum InstructionType {
-    
+public enum InstructionType {   
     KILL, USE, DELETE, NEW
 }

@@ -15,12 +15,25 @@ public class Computer {
         processes = new ArrayList();
     }
     
+    /**
+     * Retorna el estado de la computadora. Incluye el contenido de
+     * memoria física, virtual y una lista con todas las páginas ordenadas
+     * por ID de forma ascendente. También retorna estadísticas de la ejecución
+     * actual.
+     * @return Retorna un objeto ComputerState con el estado de la computadora.
+     */
     public ComputerState getState(){
         return new ComputerState(mmu.getPhysicalMem(), mmu.getVirtualMem(), 
                                  mmu.getClock(), mmu.getThrashing(), 
                                  processes, mmu.getPhysicalMemSize());
     }
     
+    /**
+     * Ejecuta una instrucción NEW en la computadora. Crea un puntero
+     * para las páginas asignadas en memoria y lo retorna al proceso.
+     * @param pId El identificador del proceso.
+     * @param size El tamaño en KB de memoria solitiada.
+     */
     public void executeNew(int pId, int size){
         
         // Creamos un objeto para el proceso si no existe anteriormente
@@ -44,6 +57,12 @@ public class Computer {
         process.insertPointer(pointer);
     }
     
+    /**
+     * Ejecuta una instrucción DELETE. Se eliminan todas las páginas
+     * asociadas al puntero de la memoria y la entrada del mapa
+     * de memoria para el puntero.
+     * @param pointer El puntero a liberar.
+     */
     public void executeDelete(int pointer){
         
         mmu.releasePointer(pointer);
@@ -57,10 +76,20 @@ public class Computer {
         }
     }
     
+    /**
+     * Ejecuta una instrucción USE. Carga todas las páginas asociadas al
+     * puntero a memoria RAM. 
+     * @param pointer El puntero a utilizar. 
+     */
     public void executeUse(int pointer){
         mmu.usePointer(pointer);
     }
     
+    /**
+     * Ejecuta una instrucción KILL. Libera todos los punteros (y sus páginas)
+     * asociados al proceso.
+     * @param pId El identificador del proceso.
+     */
     public void executeKill(int pId){
       
         // Obtenemos el objeto del proceso
