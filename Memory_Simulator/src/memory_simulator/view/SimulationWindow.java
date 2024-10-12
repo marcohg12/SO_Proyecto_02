@@ -47,7 +47,7 @@ public final class SimulationWindow extends javax.swing.JFrame {
         
         // Se inician las simulaciones
         simulationALGO = new Simulation(algoType, instructions, seed);
-        simulationOPT = new Simulation(SC_ALGO, instructions, seed);
+        simulationOPT = new Simulation(OPT_ALGO, instructions, seed);
         algorithm = algoType;
         
         // Generar listas de colores para cada algoritmo 
