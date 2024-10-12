@@ -116,6 +116,7 @@ public class MMU {
                 page.setTimestamp(Instant.now());
                 page.setLastUsage(Instant.now());
                 page.setSecondChance(true);
+                page.setReplaceable(false);
                 physicalMem[emptyAddress] = page;
                 
                 // Actualizamos los tiempos
@@ -131,6 +132,7 @@ public class MMU {
                 page.setTimestamp(Instant.now());
                 page.setLastUsage(Instant.now());
                 page.setSecondChance(true);
+                page.setReplaceable(false);
                 
                 // Intercambiamos las páginas
                 pageToRemove.setInPhysicalMemory(false);
@@ -150,6 +152,13 @@ public class MMU {
             
             // Actualizamos los contadores
             pageCount += 1;
+        }
+        
+        // Actualizamos los flags de reemplazo de las páginas
+        // y el puntero asociado a las mismas
+        for (Page page : pointerPages){
+            page.setReplaceable(true);
+            page.setPointer(processPointer);
         }
         
         memMap.put(processPointer, pointerPages);
@@ -204,6 +213,7 @@ public class MMU {
                 // Hit de página
                 page.setLastUsage(Instant.now());
                 page.setSecondChance(true);
+                page.setReplaceable(false);
                 clock += 1;
             } else {
                 
@@ -224,6 +234,7 @@ public class MMU {
                     pageToLoad.setSecondChance(true);
                     pageToLoad.setInPhysicalMemory(true);
                     pageToLoad.setPhysicalAddress(emptyAddress);
+                    pageToLoad.setReplaceable(false);
                     physicalMem[emptyAddress] = pageToLoad;
                 } else {
                     
@@ -245,9 +256,15 @@ public class MMU {
                     pageToLoad.setSecondChance(true);
                     pageToLoad.setInPhysicalMemory(true);
                     pageToLoad.setPhysicalAddress(addressToInsert);
+                    pageToLoad.setReplaceable(false);
                     physicalMem[addressToInsert] = pageToLoad;
                 }
             }
+        }
+        
+        // Actualizamos los flags de reemplazo de las páginas
+        for (Page page : pagesToUse){
+            page.setReplaceable(true);
         }
     }
 

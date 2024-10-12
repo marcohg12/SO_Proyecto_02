@@ -14,6 +14,7 @@ public class Page {
     private int processId;            // Identificador del proceso dueño de la página
     private int virtualAddress;       // Dirección de la página en memoria virtual
     private int pointer;              // Puntero asociado a la página
+    private boolean replaceable;      // Flag que indica si la página se puede reemplazar
     
     public Page(int pageId, int physicalAddress, boolean inPhysicalMemory, int spaceUsed, int processId){
         this.pageId = pageId;
@@ -22,6 +23,7 @@ public class Page {
         timestamp = null;
         lastUsage = null;
         secondChance = true;
+        replaceable = true;
         this.spaceUsed = spaceUsed;
         this.processId = processId;
     }
@@ -104,6 +106,14 @@ public class Page {
 
     public void setPointer(int pointer) {
         this.pointer = pointer;
+    }
+
+    public boolean isReplaceable() {
+        return replaceable;
+    }
+
+    public void setReplaceable(boolean replaceable) {
+        this.replaceable = replaceable;
     }
      
     @Override

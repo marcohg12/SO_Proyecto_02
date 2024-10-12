@@ -15,8 +15,11 @@ public class RND implements PaginationAlgorithm {
     public Page getPageToRemove(Page[] physicalMem) { 
         
         // Obtiene una página elatoria de la memoria RAM
+        int randomIndex;
+        do {
+            randomIndex = random.nextInt(0, physicalMem.length);
+        } while (!physicalMem[randomIndex].isReplaceable());
  
-        int randomIndex = random.nextInt(0, physicalMem.length);
         return physicalMem[randomIndex];
     }
       

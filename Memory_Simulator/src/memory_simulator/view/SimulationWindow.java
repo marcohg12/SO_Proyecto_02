@@ -192,23 +192,29 @@ public final class SimulationWindow extends javax.swing.JFrame {
             if(page.isInPhysicalMemory()){
                 row[4] = page.getPhysicalAddress();
                 row[5] = "";
+                
+                row[6] = formatTime(page.getTimestamp()) + "s";  
+                
+                if(algoType == SC_ALGO){
+                    
+                    sc = page.getSecondChance();
+                    
+                    if(sc == true){
+                        row[7] = 1;
+                    }else if(sc == false){
+                        row[7] = 0;
+                    }
+                }else if(algoType == MRU_ALGO){
+                    row[7] = formatTime(page.getLastUsage()) + "s";
+                }else if (algoType == RND_ALGO || algoType == OPT_ALGO || algoType == FIFO_ALGO){
+                    row[7] = "";
+                }
+            
             }else{
                 row[4] = "";
                 row[5] = page.getVirtualAddress();  
             } 
-            row[6] = formatTime(page.getTimestamp()) + "s";  
-            if(algoType == SC_ALGO){
-                sc = page.getSecondChance();
-                if(sc == true){
-                    row[7] = 1;
-                }else if(sc == false){
-                    row[7] = 0;
-                }
-            }else if(algoType == MRU_ALGO){
-                row[7] = formatTime(page.getLastUsage()) + "s";
-            }else if (algoType == RND_ALGO || algoType == OPT_ALGO || algoType == FIFO_ALGO){
-                row[7] = "";
-            }
+            
             model.addRow(row);
         }
 

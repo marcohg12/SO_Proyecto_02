@@ -24,7 +24,7 @@ public class MRU implements PaginationAlgorithm {
                 mostRecentlyUsedPage = page;
             }
             
-            if (page.getLastUsage().isAfter(mostRecentlyUsedPage.getLastUsage())){
+            if (page.isReplaceable() && page.getLastUsage().isAfter(mostRecentlyUsedPage.getLastUsage())){
                 mostRecentlyUsedPage = page;
             }
         }

@@ -19,12 +19,13 @@ public class SC implements PaginationAlgorithm {
             
             Page page = physicalMem[index];
             
-            if (page.getSecondChance() == false){
+            if (page.isReplaceable() && page.getSecondChance() == false){
                 return page;
-            } else {
+            } else if (page.isReplaceable() && page.getSecondChance() == true) {
                 page.setSecondChance(false);
-                index = (index + 1) % physicalMem.length;
             }
+            
+            index = (index + 1) % physicalMem.length;
         }
     }
   
