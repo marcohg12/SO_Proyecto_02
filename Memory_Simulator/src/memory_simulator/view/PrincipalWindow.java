@@ -3,6 +3,11 @@ package memory_simulator.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,8 +31,11 @@ public class PrincipalWindow extends javax.swing.JFrame {
     ArrayList<String> instructions;
     PaginationAlgoType algorithm;
     int seed;
+    Color gray;
+    String path; 
 
     public PrincipalWindow() {
+        gray = new Color(153,153,153);
         initComponents();
     }
     
@@ -119,6 +127,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         buttonGenerate = new javax.swing.JButton();
         buttonLoad = new javax.swing.JButton();
         generateSimulation = new javax.swing.JButton();
+        buttonDonwload = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -206,6 +215,14 @@ public class PrincipalWindow extends javax.swing.JFrame {
         buttonGenerate.setBackground(new java.awt.Color(153, 153, 153));
         buttonGenerate.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         buttonGenerate.setText("Generar");
+        buttonGenerate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                buttonGenerateMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                buttonGenerateMouseExited(evt);
+            }
+        });
         buttonGenerate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonGenerateActionPerformed(evt);
@@ -216,6 +233,14 @@ public class PrincipalWindow extends javax.swing.JFrame {
         buttonLoad.setBackground(new java.awt.Color(153, 153, 153));
         buttonLoad.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
         buttonLoad.setText("Cargar");
+        buttonLoad.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                buttonLoadMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                buttonLoadMouseExited(evt);
+            }
+        });
         buttonLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonLoadActionPerformed(evt);
@@ -226,12 +251,38 @@ public class PrincipalWindow extends javax.swing.JFrame {
         generateSimulation.setBackground(new java.awt.Color(153, 153, 153));
         generateSimulation.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         generateSimulation.setText("Generar Simulación");
+        generateSimulation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                generateSimulationMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                generateSimulationMouseExited(evt);
+            }
+        });
         generateSimulation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 generateSimulationActionPerformed(evt);
             }
         });
         jPanel1.add(generateSimulation, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 640, 200, 30));
+
+        buttonDonwload.setBackground(new java.awt.Color(153, 153, 153));
+        buttonDonwload.setFont(new java.awt.Font("Microsoft YaHei", 0, 12)); // NOI18N
+        buttonDonwload.setText("Descargar");
+        buttonDonwload.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                buttonDonwloadMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                buttonDonwloadMouseExited(evt);
+            }
+        });
+        buttonDonwload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDonwloadActionPerformed(evt);
+            }
+        });
+        jPanel1.add(buttonDonwload, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 500, 100, 25));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -275,7 +326,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
         if(errorFound == false){
             instructions =  InstructionSetGenerator.getInstructionSet(seed, processes, operations);
             JOptionPane.showMessageDialog(null, "Se ha generado el archivo", "", JOptionPane.INFORMATION_MESSAGE);
-            InstructionSetGenerator.writeInstructionsToFile(instructions); 
+            path = InstructionSetGenerator.writeInstructionsToFile(instructions); 
         }
     }//GEN-LAST:event_buttonGenerateActionPerformed
 
@@ -314,6 +365,69 @@ public class PrincipalWindow extends javax.swing.JFrame {
         
     }//GEN-LAST:event_generateSimulationActionPerformed
 
+    private void buttonGenerateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonGenerateMouseEntered
+        buttonGenerate.setBackground(Color.WHITE);
+    }//GEN-LAST:event_buttonGenerateMouseEntered
+
+    private void buttonGenerateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonGenerateMouseExited
+        buttonGenerate.setBackground(gray);
+    }//GEN-LAST:event_buttonGenerateMouseExited
+
+    private void buttonDonwloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDonwloadMouseEntered
+        buttonDonwload.setBackground(Color.WHITE);
+    }//GEN-LAST:event_buttonDonwloadMouseEntered
+
+    private void buttonDonwloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDonwloadMouseExited
+        buttonDonwload.setBackground(gray);
+    }//GEN-LAST:event_buttonDonwloadMouseExited
+
+    private void buttonLoadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonLoadMouseEntered
+        buttonLoad.setBackground(Color.WHITE);
+    }//GEN-LAST:event_buttonLoadMouseEntered
+
+    private void buttonLoadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonLoadMouseExited
+        buttonLoad.setBackground(gray);
+    }//GEN-LAST:event_buttonLoadMouseExited
+
+    private void generateSimulationMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_generateSimulationMouseEntered
+        generateSimulation.setBackground(Color.WHITE);
+    }//GEN-LAST:event_generateSimulationMouseEntered
+
+    private void generateSimulationMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_generateSimulationMouseExited
+        generateSimulation.setBackground(gray);
+    }//GEN-LAST:event_generateSimulationMouseExited
+
+    private void buttonDonwloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDonwloadActionPerformed
+        if(path!=null){
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Guardar archivo como");
+            fileChooser.setSelectedFile(new File("InstructionSet.txt"));
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+            int userSelection = fileChooser.showSaveDialog(null);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File destinationFile = fileChooser.getSelectedFile();
+                try (InputStream in = new FileInputStream(path);
+                     OutputStream out = new FileOutputStream(destinationFile)) {
+
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, length);
+                    }
+                    JOptionPane.showMessageDialog(null, "Archivo descargado con éxito.");
+
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al descargar el archivo: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "No se ha generado un archivo", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buttonDonwloadActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -351,6 +465,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonDonwload;
     private javax.swing.JButton buttonGenerate;
     private javax.swing.JButton buttonLoad;
     private javax.swing.JComboBox<String> comboBoxAlgorithm;

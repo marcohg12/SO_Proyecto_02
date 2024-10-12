@@ -47,7 +47,7 @@ public final class SimulationWindow extends javax.swing.JFrame {
         
         // Se inician las simulaciones
         simulationALGO = new Simulation(algoType, instructions, seed);
-        simulationOPT = new Simulation(OPT_ALGO, instructions, seed);
+        simulationOPT = new Simulation(SC_ALGO, instructions, seed);
         algorithm = algoType;
         
         // Generar listas de colores para cada algoritmo 
@@ -346,7 +346,6 @@ public final class SimulationWindow extends javax.swing.JFrame {
         setBackground(new java.awt.Color(0, 0, 0));
         setMaximumSize(new java.awt.Dimension(1170, 820));
         setMinimumSize(new java.awt.Dimension(1170, 820));
-        setPreferredSize(new java.awt.Dimension(1170, 820));
         setSize(new java.awt.Dimension(1170, 820));
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));

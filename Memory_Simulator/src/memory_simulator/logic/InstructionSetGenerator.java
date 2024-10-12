@@ -1,6 +1,7 @@
 package memory_simulator.logic;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -133,16 +134,21 @@ public class InstructionSetGenerator {
     
     
     
-    public static void writeInstructionsToFile(ArrayList<String> instructions) {
-    String fileName = "instructions.txt"; // Nombre del archivo
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-        for (String instruction : instructions) {
-            writer.write(instruction);
-            writer.newLine();
+    public static String writeInstructionsToFile(ArrayList<String> instructions) {
+        String fileName = "instructions.txt"; 
+        File file = new File(fileName);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (String instruction : instructions) {
+                writer.write(instruction);
+                writer.newLine();
+            }
+            System.out.println("Instrucciones guardadas exitosamente en el archivo: " + file.getAbsolutePath());
+            return file.getAbsolutePath(); 
+
+        } catch (IOException e) {
+            System.out.println("Ocurrió un error al escribir el archivo: " + e.getMessage());
+            return null; 
         }
-        System.out.println("Instrucciones guardadas exitosamente en el archivo: " + fileName);
-    } catch (IOException e) {
-        System.out.println("Ocurrió un error al escribir el archivo: " + e.getMessage());
-        }
-    }  
+    }
 }
