@@ -1,4 +1,4 @@
-# Proyecto °2: Simulador de Memoria
+# Proyecto 2: Simulador de Memoria
 
 ## Integrantes
 - Ariana Alvarado Molina
@@ -15,4 +15,23 @@ el algoritmo seleccionado por el usuario. Mientras se ejecuta la simulación, se
 como el tiempo de simulación, memoria real utilizada, memoria virtual utiliza, tiempo de thrashing, el estado de la MMU, y entre otros datos relevantes para comparar el
 rendimiento de ambos algoritmos. 
 
+## Requerimientos
+
+- Un entorno Linux Fedora Workstation 39.
+
 ## Instalación y Uso
+
+Primero, descargue el archivo zip con el contenido de este repositorio. Luego, descomprima la carpeta y abra una terminal de comandos
+dentro de la carpeta descomprimida. Para utilizar la aplicación debe instalar el JDK 21 de Java, lo cual puede realizar ejecutando
+el archivo [dependencies.sh](dependencies.sh) con el siguiente comando:
+
+```bash
+sudo ./dependencies.sh
+```
+
+Para arrancar la aplicación, debe ejecutar el archivo [run.sh](run.sh) con el siguiente comando:
+
+```bash
+sudo ./run.sh
+```
+
