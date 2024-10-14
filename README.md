@@ -22,7 +22,20 @@ rendimiento de ambos algoritmos.
 ## Instalación y Uso
 
 Primero, descargue el archivo zip con el contenido de este repositorio. Luego, descomprima la carpeta y abra una terminal de comandos
-dentro de la carpeta descomprimida. Para utilizar la aplicación debe instalar el JDK 21 de Java, lo cual puede realizar ejecutando
+dentro de la carpeta descomprimida. Para ejecutar los archivos de instalación y ejecución debe dar permisos de ejecución a los mismos,
+para lo cual debe ejecutar los siguientes comandos:
+
+```bash
+chmod +x dependencies.sh
+```
+
+Y luego:
+
+```bash
+chmod +x run.sh
+```
+
+Para utilizar la aplicación debe instalar el JDK 21 de Java, lo cual puede realizar ejecutando
 el archivo [dependencies.sh](dependencies.sh) con el siguiente comando:
 
 ```bash
