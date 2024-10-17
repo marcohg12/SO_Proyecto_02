@@ -1,11 +1,9 @@
 package memory_simulator.logic;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import memory_simulator.model.Instruction;
 import memory_simulator.model.InstructionType;
-import memory_simulator.model.MMU;
 import memory_simulator.model.Page;
 
 public class OPT implements PaginationAlgorithm {

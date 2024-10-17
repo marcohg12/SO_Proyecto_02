@@ -327,7 +327,10 @@ public class PrincipalWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonGenerateActionPerformed
 
     private void buttonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoadActionPerformed
+        String userHome = System.getProperty("user.home");
+        File downloadsFolder = new File(userHome, "Downloads");
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(downloadsFolder);
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text Files", "txt");
         fileChooser.setFileFilter(filter);
@@ -346,14 +349,27 @@ public class PrincipalWindow extends javax.swing.JFrame {
     private void generateSimulationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateSimulationActionPerformed
         if(instructions == null){
             JOptionPane.showMessageDialog(null, "No se cargo o generó un archivo", "Error", JOptionPane.ERROR_MESSAGE);
-        }else if("".equals(textRandomSeed.getText())){
+        }else if(comboBoxAlgorithm.getSelectedItem().equals("RND") && "".equals(textRandomSeed.getText())){
             JOptionPane.showMessageDialog(null, "Debe ingresar una semilla válida (número entero)", "Error", JOptionPane.ERROR_MESSAGE);
-        }else if(instructions != null & !"".equals(textRandomSeed.getText())){
-        
-            selectAlgorithm();
-            SimulationWindow window = new SimulationWindow(algorithm, instructions, seed);
-            window.setVisible(true);
-            this.setVisible(false);
+        }else if(instructions != null){
+            
+            boolean errorFound = false;
+            
+            if (comboBoxAlgorithm.getSelectedItem().equals("RND")){
+                try{
+                seed = Integer.parseInt(textRandomSeed.getText());
+                }catch(NumberFormatException e){
+                    JOptionPane.showMessageDialog(null, "Debe ingresar una semilla válida (número entero)", "Error", JOptionPane.ERROR_MESSAGE);
+                    errorFound = true; 
+                }
+            }
+            
+            if (!errorFound){
+                selectAlgorithm();
+                SimulationWindow window = new SimulationWindow(algorithm, instructions, seed);
+                window.setVisible(true);
+                this.setVisible(false);
+            }
         }
         
     }//GEN-LAST:event_generateSimulationActionPerformed
@@ -392,7 +408,12 @@ public class PrincipalWindow extends javax.swing.JFrame {
 
     private void buttonDonwloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDonwloadActionPerformed
         if(path!=null){
+            
+            String userHome = System.getProperty("user.home");
+            File downloadsFolder = new File(userHome, "Downloads");
             JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(downloadsFolder);
+            
             fileChooser.setDialogTitle("Guardar archivo como");
             fileChooser.setSelectedFile(new File("InstructionSet.txt"));
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
