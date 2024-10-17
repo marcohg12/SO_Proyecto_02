@@ -328,6 +328,7 @@ public class PrincipalWindow extends javax.swing.JFrame {
 
     private void buttonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoadActionPerformed
         String userHome = System.getProperty("user.home");
+        System.out.println(userHome);
         File downloadsFolder = new File(userHome, "Downloads");
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(downloadsFolder);

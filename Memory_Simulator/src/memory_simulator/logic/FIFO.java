@@ -21,7 +21,7 @@ public class FIFO implements PaginationAlgorithm {
                 continue;
             }
             
-            if (oldestPage == null){
+            if (oldestPage == null && page.isReplaceable()){
                 oldestPage = page;
             }
             

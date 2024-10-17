@@ -20,7 +20,7 @@ public class MRU implements PaginationAlgorithm {
                 continue;
             }
             
-            if (mostRecentlyUsedPage == null){
+            if (mostRecentlyUsedPage == null && page.isReplaceable()){
                 mostRecentlyUsedPage = page;
             }
             
