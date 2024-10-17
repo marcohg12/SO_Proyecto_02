@@ -45,6 +45,6 @@ sudo ./dependencies.sh
 Para arrancar la aplicación, debe ejecutar el archivo [run.sh](run.sh) con el siguiente comando:
 
 ```bash
-sudo ./run.sh
+./run.sh
 ```
 
