@@ -25,7 +25,8 @@ public class FIFO implements PaginationAlgorithm {
                 oldestPage = page;
             }
             
-            if (page.isReplaceable() && page.getTimestamp().isBefore(oldestPage.getTimestamp())){
+            if (oldestPage != null &&
+                page.isReplaceable() && page.getTimestamp().isBefore(oldestPage.getTimestamp())){
                 oldestPage = page;
             }
         }
